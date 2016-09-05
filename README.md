@@ -1,0 +1,1 @@
+# painter-plugin-photoshop-export
