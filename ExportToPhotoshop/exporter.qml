@@ -30,13 +30,12 @@ Rectangle {
 	border.color: "white"
 	antialiasing: true
 	border.width: 1
-	radius: 3
-	color: mouseArea.containsMouse ? "black" : "#050243"  
+	color: mouseArea.containsMouse ? "black" : "#202020"  
 	
 	Text {
 		id: label
 		anchors.centerIn: parent
-		text: "Export to PSD"
+		text: "Export to Photoshop"
 		color: "white" 
 		//font.pointSize: 8; font.bold: true
 	}
