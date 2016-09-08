@@ -2,6 +2,7 @@
 
 /*=============HELPER=============*/
 
+// Rasterize all layers.
 function rasterize_All()
 {
 	try {
@@ -53,7 +54,7 @@ function new_layer()
 }
 function send_backward()
 {
-	/*var id_mov = charIDToTypeID('move');
+	var id_mov = charIDToTypeID('move');
 	var desc_ll = new ActionDescriptor();
 	var id_null = charIDToTypeID('null');
 	var ref_ll = new ActionReference();
@@ -69,7 +70,7 @@ function send_backward()
 	var id_Prv = charIDToTypeID('Prvs');
 	ref_d.putEnumerated(id_LL, id_OO, id_Prv);
 	desc_ll.putReference(id_T, ref_d);
-	executeAction(id_mov, desc_ll, DialogModes.NO);*/
+	executeAction(id_mov, desc_ll, DialogModes.NO);
 }
 function center_layer()
 {
@@ -95,13 +96,31 @@ function center_layer()
 }
 function open_png(path_f)
 {
+	var idPlc = charIDToTypeID('Plc ');
 	var desc_sObj = new ActionDescriptor();
-	desc_sObj.putPath(charIDToTypeID('null'), path_f);
-	try {
-		executeAction(charIDToTypeID('Plc '), desc_sObj, DialogModes.NONE);
+	var idnull = charIDToTypeID('null');
+	desc_sObj.putPath(idnull, path_f);
+	var idFTcs = charIDToTypeID('FTcs');
+	var idQCSt = charIDToTypeID('QCSt');
+	var idQcsa = charIDToTypeID('Qcsa');
+	desc_sObj.putEnumerated(idFTcs, idQCSt, idQcsa);
+	var idOfst = charIDToTypeID('Ofst');
+	var desc_sObj_2 = new ActionDescriptor();
+	var idHrzn = charIDToTypeID('Hrzn');
+	var idPxlH = charIDToTypeID('#Pxl');
+	desc_sObj_2.putUnitDouble(idHrzn, idPxlH, 0.000000);
+	var idVrtc = charIDToTypeID('Vrtc');
+	var idPxlV = charIDToTypeID('#Pxl');
+	desc_sObj_2.putUnitDouble(idVrtc, idPxlV, 0.000000);
+	var idOfst2 = charIDToTypeID('Ofst');
+	desc_sObj.putObject(idOfst, idOfst2, desc_sObj_2);
+	try
+	{
+		executeAction(idPlc, desc_sObj, DialogModes.NONE);
 		return true;
 	}
-	catch (e) {
+	catch (e)
+	{
 		return false;
 	}
 }
