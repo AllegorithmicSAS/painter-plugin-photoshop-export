@@ -1,5 +1,7 @@
 
 
+progressBar.close();
+
 /*=============HELPER=============*/
 
 // Rasterize all layers.

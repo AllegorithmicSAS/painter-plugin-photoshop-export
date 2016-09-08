@@ -89,12 +89,16 @@ Rectangle {
 	 	for (var materialId = 0; materialId < doc_str.materials.length; materialId++) {
 	 		var material = doc_str.materials[materialId];
 	 		fileDesc.materialName = material.name;
+	 		//Update the progress bar
+	 		fileDesc.outFile.write("progressBar.material.value = " + 100/doc_str.materials.length*(materialId+1) + ";\n");
 	 		//Browse stacks
 	 		for (var stackId = 0; stackId < material.stacks.length; ++stackId) {
 	 			var stack = material.stacks[stackId];
 	 			//Browse channels
 	 			for (var channelId = 0; channelId < stack.channels.length; ++channelId) {
 		 			fileDesc.channel = stack.channels[channelId];
+		 			//Update the progress bar
+		 			fileDesc.outFile.write("progressBar.channel.value = " + 100/stack.channels.length*(channelId+1) + ";\n");
 		 			//PNG export of a channel snapshot into the path export
 		 			var filename = fileDesc.createFilename(".png");
 		 			alg.mapexport.save([fileDesc.materialName, fileDesc.channel], filename);
@@ -103,14 +107,20 @@ Rectangle {
 		 			//Browse layers roots forest
 					for (var layerId = 0; layerId < stack.layers.length; ++layerId) {
 			 			var layer = material.stacks[0].layers[layerId];
+			 			//Update the progress bar
+		 				fileDesc.outFile.write("progressBar.layer.value = " + 100/stack.layers.length*(layerId+1) + ";\n");
 			 			//Browse layer tree from root
 			 			layersDFS(layer, fileDesc);
 				 	}
+				 	//Update the progress bar
+		 			fileDesc.outFile.write("progressBar.layer.value = 0;\n");
 				 	//Gamma correction for sRGB channel
 				 	if(fileDesc.channel == "basecolor" || fileDesc.channel == "diffuse" || fileDesc.channel == "specular" || fileDesc.channel == "emissive" || fileDesc.channel == "transmissive" ) {
 						fileDesc.outFile.write("	convert_to_profile(); \n");
 					}
 				}
+				//Update the progress bar
+		 		fileDesc.outFile.write("progressBar.channel.value = 0;\n");
 	 		}
 	 	}
 	}
