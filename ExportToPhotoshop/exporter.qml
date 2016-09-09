@@ -39,44 +39,72 @@ Rectangle {
 		color: "white" 
 		//font.pointSize: 8; font.bold: true
 	}
+
+	FileDialog {
+		id: fileDialog
+		title: "Choose a Photoshop executable file..."
+		nameFilters: [ "Photoshop files (*.exe *.app)", "All files (*)" ]
+		selectedNameFilter: "Executable files (*)"
+		onAccepted: {
+			alg.settings.setValue("photoshopPath", alg.fileIO.urlToLocalFile(fileUrls[0]));
+			exportToPhotoshop();
+		}
+	}
 	
 	MouseArea { 
 		id: mouseArea
 		anchors.fill: parent
 		onClicked: {
-			//Struct to store export strings
-			var fileDesc = {
-				materialName: "",
-				channel: "",
-				exportPath: "",
-				outFile: "",
-
-				createFilename : function(concate) {
-					return this.exportPath + this.materialName + "_" + this.channel + "_" + concate;
-				}
+			if (!alg.settings.contains("photoshopPath")) {
+				alg.subprocess.check_call(fileDialog.open());
 			}
+			alg.log.info(alg.settings.value("photoshopPath", ""));
 
-			//The export path is the working directory
-			fileDesc.exportPath = alg.mapexport.exportPath() + "/";
-			fileDesc.outFile = alg.fileIO.open(fileDesc.exportPath + "jsx_SP.jsx", 'w');
-
-			//Add the header photoshop script
-			var headerScript = alg.fileIO.open(alg.plugin_root_directory + "/header.jsx", 'r');
-			fileDesc.outFile.write(headerScript.readAll());
-			headerScript.close();
-			
-			//Run the script
-			run(fileDesc);
-
-			//Add the footer photoshop script
-			var footerScript = alg.fileIO.open(alg.plugin_root_directory + "/footer.jsx", 'r');
-			fileDesc.outFile.write(footerScript.readAll());
-			footerScript.close();
-
-		 	fileDesc.outFile.close();
-
-		 	alg.log.info("Done.");
+			exportToPhotoshop();
 		}
+	}
+
+	function exportToPhotoshop() {
+		//Struct to store export strings
+		var fileDesc = {
+			materialName: "",
+			channel: "",
+			exportPath: "",
+			outFile: "",
+
+			createFilename : function(concate) {
+				return this.exportPath + this.materialName + "_" + this.channel + "_" + concate;
+			}
+		}
+
+		//The export path is the working directory
+		fileDesc.exportPath = alg.mapexport.exportPath() + "/";
+		fileDesc.outFile = alg.fileIO.open(fileDesc.exportPath + "jsx_SP.jsx", 'w');
+
+		//Add the header photoshop script
+		var headerScript = alg.fileIO.open(alg.plugin_root_directory + "/header.jsx", 'r');
+		fileDesc.outFile.write(headerScript.readAll());
+		headerScript.close();
+		
+		try {
+		//Run the script
+		run(fileDesc);
+		}catch(e) {alg.log.error(e.message);}
+		//Add the footer photoshop script
+		var footerScript = alg.fileIO.open(alg.plugin_root_directory + "/footer.jsx", 'r');
+		fileDesc.outFile.write(footerScript.readAll());
+		footerScript.close();
+
+	 	fileDesc.outFile.close();
+
+	 	alg.log.info("Done.");
+	 	if (Qt.platform.os == "windows") {
+	 		alg.subprocess.call(["\"" + alg.settings.value("photoshopPath", "") + "\"", "\"" + fileDesc.exportPath.split('/').join('\\') + "jsx_SP.jsx\""]);
+	 	} else if (Qt.platform.os == "osx") {
+			//TODO
+	 	} else if (Qt.platform.os == "linux") {
+			//TODO
+	 	}
 	}
 
 	/* 
@@ -200,10 +228,11 @@ Rectangle {
 	 * Return the string to create a new photoshop folder
 	*/
 	function newFolderStr(folder, channel) {
+		var blending = alg.mapexport.layerBlendingModes(folder.uid)[channel];
 		return "\n\n	//Add folder \n\
 	folders.push(folders[folders.length - 1].layerSets.add()); \n\
-	app.activeDocument.activeLayer.opacity = " + folder.blending[channel].opacity + ";\n\
-	" + convertBlendingMode(folder.blending[channel].mode, 1) + "; \n\
+	app.activeDocument.activeLayer.opacity = " + blending.opacity + ";\n\
+	" + convertBlendingMode(blending.mode, 1) + "; \n\
 	app.activeDocument.activeLayer.name = \"" + folder.name + "\"; ";
 	}
 
@@ -211,13 +240,14 @@ Rectangle {
 	 * Return the string to create a new photoshop layer
 	*/
 	function newLayerStr(filename, layer, channel) {
+		var blending = alg.mapexport.layerBlendingModes(layer.uid)[channel];
 		return "\n\n	//Add layer \n\
 	folders[folders.length - 1].artLayers.add(); \n\
 	var layerFile = File(\"" + filename + "\"); \n\
 	open_png(layerFile); \n\
 	layerFile.remove(); \n\
-	app.activeDocument.activeLayer.opacity = " + layer.blending[channel].opacity + ";\n\
-	" + convertBlendingMode(layer.blending[channel].mode, 0) + ";\n\
+	app.activeDocument.activeLayer.opacity = " + blending.opacity + ";\n\
+	" + convertBlendingMode(blending.mode, 0) + ";\n\
 	app.activeDocument.activeLayer.name = \"" + layer.name + "\";";
 	}
 

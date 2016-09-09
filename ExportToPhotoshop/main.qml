@@ -22,14 +22,6 @@ import QtQuick 2.2
 import Painter 1.0
 
 PainterPlugin {
-
-	// plugin description, displayed in the plugin about dialog
-	description: "This plugin export layers stacks to photoshop. Each material and channel are exported one PSD file.\n"
-
-	// project homepage url, displayed in the plugin about dialog.
-	// Warning: the scheme is madatory to create a clickable link in the about dialog.
-	projectUrl: "https://github.com/AllegorithmicSAS/painter-plugin-photoshop-export"
-		
 	Component.onCompleted: {
 		// create the button
 		alg.ui.addToolBarWidget("exporter.qml");
