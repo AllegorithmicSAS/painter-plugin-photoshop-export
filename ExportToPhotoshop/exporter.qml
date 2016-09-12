@@ -55,11 +55,9 @@ Rectangle {
 		id: mouseArea
 		anchors.fill: parent
 		onClicked: {
-			if (!alg.settings.contains("photoshopPath")) {
+			if (!alg.settings.contains("photoshopPath") && alg.settings.value("pluginLaunchPhotoshop", false)) {
 				alg.subprocess.check_call(fileDialog.open());
 			}
-			alg.log.info(alg.settings.value("photoshopPath", ""));
-
 			exportToPhotoshop();
 		}
 	}
@@ -68,18 +66,24 @@ Rectangle {
 		//Struct to store export strings
 		var fileDesc = {
 			materialName: "",
+			stackName: "",
 			channel: "",
 			exportPath: "",
 			outFile: "",
 
 			createFilename : function(concate) {
-				return this.exportPath + this.materialName + "_" + this.channel + "_" + concate;
+				return this.exportPath + this.materialName + "_" +this.stackName + "_" + this.channel + "_" + concate;
 			}
 		}
 
 		//The export path is the working directory
 		fileDesc.exportPath = alg.mapexport.exportPath() + "/";
-		fileDesc.outFile = alg.fileIO.open(fileDesc.exportPath + "jsx_SP.jsx", 'w');
+		try {
+			fileDesc.outFile = alg.fileIO.open(fileDesc.exportPath + "jsx_SP.jsx", 'w');
+		} catch (error) {
+			alg.log.error(error.message);
+			return;
+		}
 
 		//Add the header photoshop script
 		var headerScript = alg.fileIO.open(alg.plugin_root_directory + "/header.jsx", 'r');
@@ -101,8 +105,6 @@ Rectangle {
 	 		alg.subprocess.start(["\"" + alg.settings.value("photoshopPath", "") + "\"", "\"" + fileDesc.exportPath.split('/').join('\\') + "jsx_SP.jsx\""]);
 	 	} else if (Qt.platform.os == "osx") {
 			alg.subprocess.start(["open", "-a", alg.settings.value("photoshopPath", "").split(' ').join('\ '), fileDesc.exportPath.split(' ').join('\ ') + "jsx_SP.jsx"]);
-	 	} else if (Qt.platform.os == "linux") {
-			//TODO
 	 	}
 	}
 
@@ -121,6 +123,7 @@ Rectangle {
 	 		//Browse stacks
 	 		for (var stackId = 0; stackId < material.stacks.length; ++stackId) {
 	 			var stack = material.stacks[stackId];
+	 			fileDesc.stackName = stack.name;
 	 			//Browse channels
 	 			for (var channelId = 0; channelId < stack.channels.length; ++channelId) {
 		 			fileDesc.channel = stack.channels[channelId];
@@ -128,7 +131,7 @@ Rectangle {
 		 			fileDesc.outFile.write("progressBar.channel.value = " + 100/stack.channels.length*(channelId+1) + ";\n");
 		 			//PNG export of a channel snapshot into the path export
 		 			var filename = fileDesc.createFilename(".png");
-		 			alg.mapexport.save([fileDesc.materialName, fileDesc.channel], filename);
+		 			alg.mapexport.save([fileDesc.materialName, fileDesc.stackName, fileDesc.channel], filename);
 		 			//Create a new document into photoshop
 		 			fileDesc.outFile.write(newPSDDocumentStr(filename));
 		 			//Browse layers roots forest
@@ -162,7 +165,7 @@ Rectangle {
 	 	if (layer.layers == undefined) {
 	 		//PNG export of the leaf into the path export
 	 		var filename = fileDesc.createFilename(layer.uid + ".png");
-			alg.mapexport.save([layer.uid, fileDesc.channel], filename);
+			alg.mapexport.save([fileDesc.materialName, fileDesc.stackName, layer.uid, fileDesc.channel], filename);
 			//Create the layer into photoshop
 			fileDesc.outFile.write(newLayerStr(filename, layer, fileDesc.channel));
 			//Add his mask if exist
@@ -193,7 +196,7 @@ Rectangle {
 	function addMask(layer, fileDesc) {
 		//PNG export of the mask into the path export
 		var filename = fileDesc.createFilename(layer.uid + "_mask.png");
-	 	alg.mapexport.save([layer.uid, "mask"], filename);
+	 	alg.mapexport.save([fileDesc.materialName, fileDesc.stackName, layer.uid, "mask"], filename);
 	 	//Create the mask into photoshop
 	 	fileDesc.outFile.write(newMaskStr(filename));
 	}

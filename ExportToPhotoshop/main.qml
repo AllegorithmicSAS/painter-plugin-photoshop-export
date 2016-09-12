@@ -23,6 +23,14 @@ import Painter 1.0
 
 PainterPlugin {
 	Component.onCompleted: {
+		// default value settings
+		if (!alg.settings.contains("pluginLaunchPhotoshop")) {
+			if (Qt.platform.os == "windows" || Qt.platform.os == "osx") {
+				alg.settings.setValue("pluginLaunchPhotoshop", true);
+		 	} else {
+				alg.settings.setValue("pluginLaunchPhotoshop", false);
+		 	}
+		 }
 		// create the button
 		alg.ui.addToolBarWidget("exporter.qml");
 	}
