@@ -24,11 +24,11 @@ import Painter 1.0
 PainterPlugin {
 	Component.onCompleted: {
 		// default value settings
-		if (!alg.settings.contains("pluginLaunchPhotoshop")) {
+		if (!alg.settings.contains("launchPhotoshop")) {
 			if (Qt.platform.os == "windows" || Qt.platform.os == "osx") {
-				alg.settings.setValue("pluginLaunchPhotoshop", true);
+				alg.settings.setValue("launchPhotoshop", true);
 		 	} else {
-				alg.settings.setValue("pluginLaunchPhotoshop", false);
+				alg.settings.setValue("launchPhotoshop", false);
 		 	}
 		 }
 		// create the button

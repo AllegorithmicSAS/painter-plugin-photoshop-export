@@ -55,10 +55,11 @@ Rectangle {
 		id: mouseArea
 		anchors.fill: parent
 		onClicked: {
-			if (!alg.settings.contains("photoshopPath") && alg.settings.value("pluginLaunchPhotoshop", false)) {
-				alg.subprocess.check_call(fileDialog.open());
+			if (!alg.settings.contains("photoshopPath") && alg.settings.value("launchPhotoshop", false)) {
+				fileDialog.open();
+			} else {
+				exportToPhotoshop();
 			}
-			exportToPhotoshop();
 		}
 	}
 
@@ -102,9 +103,9 @@ Rectangle {
 
 	 	alg.log.info("Done.");
 	 	if (Qt.platform.os == "windows") {
-	 		alg.subprocess.start(["\"" + alg.settings.value("photoshopPath", "") + "\"", "\"" + fileDesc.exportPath.split('/').join('\\') + "jsx_SP.jsx\""]);
+	 		alg.subprocess.startDetached(["\"" + alg.settings.value("photoshopPath", "") + "\"", "\"" + fileDesc.exportPath.split('/').join('\\') + "jsx_SP.jsx\""]);
 	 	} else if (Qt.platform.os == "osx") {
-			alg.subprocess.start(["open", "-a", alg.settings.value("photoshopPath", "").split(' ').join('\ '), fileDesc.exportPath.split(' ').join('\ ') + "jsx_SP.jsx"]);
+			alg.subprocess.startDetached(["open", "-a", alg.settings.value("photoshopPath", "").split(' ').join('\ '), fileDesc.exportPath.split(' ').join('\ ') + "jsx_SP.jsx"]);
 	 	}
 	}
 
@@ -165,7 +166,7 @@ Rectangle {
 	 	if (layer.layers == undefined) {
 	 		//PNG export of the leaf into the path export
 	 		var filename = fileDesc.createFilename(layer.uid + ".png");
-			alg.mapexport.save([fileDesc.materialName, fileDesc.stackName, layer.uid, fileDesc.channel], filename);
+			alg.mapexport.save([layer.uid, fileDesc.channel], filename);
 			//Create the layer into photoshop
 			fileDesc.outFile.write(newLayerStr(filename, layer, fileDesc.channel));
 			//Add his mask if exist
@@ -196,7 +197,7 @@ Rectangle {
 	function addMask(layer, fileDesc) {
 		//PNG export of the mask into the path export
 		var filename = fileDesc.createFilename(layer.uid + "_mask.png");
-	 	alg.mapexport.save([fileDesc.materialName, fileDesc.stackName, layer.uid, "mask"], filename);
+	 	alg.mapexport.save([layer.uid, "mask"], filename);
 	 	//Create the mask into photoshop
 	 	fileDesc.outFile.write(newMaskStr(filename));
 	}

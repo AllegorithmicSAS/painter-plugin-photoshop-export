@@ -26,7 +26,7 @@ AlgDialog {
     	if (path.text != "...") {
 			alg.settings.setValue("photoshopPath", path.text);
 		}
-		alg.settings.setValue("pluginLaunchPhotoshop", launchPhotoshop.checked);
+		alg.settings.setValue("launchPhotoshop", launchPhotoshop.checked);
     }
 
     Rectangle {
@@ -101,7 +101,7 @@ AlgDialog {
                     id: launchPhotoshop
 
                     function reload() {
-                        checked = alg.settings.contains("pluginLaunchPhotoshop");
+                        checked = alg.settings.contains("launchPhotoshop");
                     }
 
                     Component.onCompleted: {
