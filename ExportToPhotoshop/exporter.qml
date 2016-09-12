@@ -132,7 +132,7 @@ AlgButton {
 		 			fileDesc.outFile.write(newPSDDocumentStr(filename));
 		 			//Browse layers roots forest
 					for (var layerId = 0; layerId < stack.layers.length; ++layerId) {
-			 			var layer = material.stacks[0].layers[layerId];
+			 			var layer = stack.layers[layerId];
 			 			//Update the progress bar
 		 				fileDesc.outFile.write("progressBar.layer.value = " + 100/stack.layers.length*(layerId+1) + ";\n");
 			 			//Browse layer tree from root
