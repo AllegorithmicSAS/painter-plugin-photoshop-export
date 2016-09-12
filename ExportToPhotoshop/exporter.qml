@@ -69,12 +69,18 @@ Rectangle {
 			materialName: "",
 			stackName: "",
 			channel: "",
+			padding: {},
 			exportPath: "",
 			outFile: "",
 
 			createFilename : function(concate) {
 				return this.exportPath + this.materialName + "_" +this.stackName + "_" + this.channel + "_" + concate;
 			}
+		}
+
+		//Padding's struct
+		if (!alg.settings.value("padding", false)) {
+			fileDesc.padding = {padding: "Transparent", dilation: 0};
 		}
 
 		//The export path is the working directory
@@ -132,7 +138,7 @@ Rectangle {
 		 			fileDesc.outFile.write("progressBar.channel.value = " + 100/stack.channels.length*(channelId+1) + ";\n");
 		 			//PNG export of a channel snapshot into the path export
 		 			var filename = fileDesc.createFilename(".png");
-		 			alg.mapexport.save([fileDesc.materialName, fileDesc.stackName, fileDesc.channel], filename);
+		 			alg.mapexport.save([fileDesc.materialName, fileDesc.stackName, fileDesc.channel], filename, fileDesc.padding);
 		 			//Create a new document into photoshop
 		 			fileDesc.outFile.write(newPSDDocumentStr(filename));
 		 			//Browse layers roots forest
@@ -166,7 +172,7 @@ Rectangle {
 	 	if (layer.layers == undefined) {
 	 		//PNG export of the leaf into the path export
 	 		var filename = fileDesc.createFilename(layer.uid + ".png");
-			alg.mapexport.save([layer.uid, fileDesc.channel], filename);
+			alg.mapexport.save([layer.uid, fileDesc.channel], filename, fileDesc.padding);
 			//Create the layer into photoshop
 			fileDesc.outFile.write(newLayerStr(filename, layer, fileDesc.channel));
 			//Add his mask if exist
@@ -197,7 +203,7 @@ Rectangle {
 	function addMask(layer, fileDesc) {
 		//PNG export of the mask into the path export
 		var filename = fileDesc.createFilename(layer.uid + "_mask.png");
-	 	alg.mapexport.save([layer.uid, "mask"], filename);
+	 	alg.mapexport.save([layer.uid, "mask"], filename, fileDesc.padding);
 	 	//Create the mask into photoshop
 	 	fileDesc.outFile.write(newMaskStr(filename));
 	}

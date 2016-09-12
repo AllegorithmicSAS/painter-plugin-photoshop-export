@@ -22,11 +22,11 @@ AlgDialog {
     }
 
     onAccepted: {
-        alg.log.error("WTF???")
     	if (path.text != "...") {
 			alg.settings.setValue("photoshopPath", path.text);
 		}
-		alg.settings.setValue("launchPhotoshop", launchPhotoshop.checked);
+		alg.settings.setValue("launchPhotoshop", launchPhotoshopCheckBox.checked);
+		alg.settings.setValue("padding", paddingCheckBox.checked);
     }
 
     Rectangle {
@@ -37,7 +37,8 @@ AlgDialog {
 
         function reload() {
             path.reload()
-            launchPhotoshop.reload()
+            launchPhotoshopCheckBox.reload()
+            paddingCheckBox.reload()
         }
 
         ColumnLayout {
@@ -91,17 +92,40 @@ AlgDialog {
                 spacing: 6
                 TextEdit {
                     readOnly: true
-                    text: "Launch photoshop after process"
+                    text: "Launch photoshop after process:"
                     Layout.fillWidth: true
                     font.bold: true
                     color: "#C8C8C8"
                 }
 
                 AlgCheckBox {
-                    id: launchPhotoshop
+                    id: launchPhotoshopCheckBox
 
                     function reload() {
                         checked = alg.settings.contains("launchPhotoshop");
+                    }
+
+                    Component.onCompleted: {
+                        reload()
+                    }
+                }
+            }
+
+            RowLayout {
+                spacing: 6
+                TextEdit {
+                    readOnly: true
+                    text: "Active Padding:"
+                    Layout.fillWidth: true
+                    font.bold: true
+                    color: "#C8C8C8"
+                }
+
+                AlgCheckBox {
+                    id: paddingCheckBox
+
+                    function reload() {
+                        checked = alg.settings.contains("padding");
                     }
 
                     Component.onCompleted: {

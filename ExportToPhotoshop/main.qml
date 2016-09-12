@@ -30,6 +30,7 @@ PainterPlugin {
 		 	} else {
 				alg.settings.setValue("launchPhotoshop", false);
 		 	}
+		 	alg.settings.setValue("padding", false);
 		 }
 		// create the button
 		alg.ui.addToolBarWidget("exporter.qml");
