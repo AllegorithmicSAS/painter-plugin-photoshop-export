@@ -33,5 +33,14 @@ PainterPlugin {
 		 }
 		// create the button
 		alg.ui.addToolBarWidget("exporter.qml");
-	}
+    }
+
+    onConfigure: {
+        // open the configuration panel
+        configurePanel.open()
+    }
+
+    ConfigurePanel {
+        id: configurePanel
+    }
 }
