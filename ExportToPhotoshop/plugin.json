@@ -1,9 +1,5 @@
 {
-	// plugin description, displayed in the plugin about dialog
 	"description": "This plugin export layers stacks to photoshop. Each material and channel are exported one PSD file.",
-	// project homepage url, displayed in the plugin about dialog.
-	// Warning: the scheme is madatory to create a clickable link in the about dialog.
 	"url": "https://github.com/AllegorithmicSAS/painter-plugin-photoshop-export",
-	// plugin version
 	"version": "1.0.0"
 }

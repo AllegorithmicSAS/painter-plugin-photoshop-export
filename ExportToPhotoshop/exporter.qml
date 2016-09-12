@@ -86,10 +86,9 @@ Rectangle {
 		fileDesc.outFile.write(headerScript.readAll());
 		headerScript.close();
 		
-		try {
 		//Run the script
 		run(fileDesc);
-		}catch(e) {alg.log.error(e.message);}
+
 		//Add the footer photoshop script
 		var footerScript = alg.fileIO.open(alg.plugin_root_directory + "/footer.jsx", 'r');
 		fileDesc.outFile.write(footerScript.readAll());
@@ -99,9 +98,9 @@ Rectangle {
 
 	 	alg.log.info("Done.");
 	 	if (Qt.platform.os == "windows") {
-	 		alg.subprocess.call(["\"" + alg.settings.value("photoshopPath", "") + "\"", "\"" + fileDesc.exportPath.split('/').join('\\') + "jsx_SP.jsx\""]);
+	 		alg.subprocess.start(["\"" + alg.settings.value("photoshopPath", "") + "\"", "\"" + fileDesc.exportPath.split('/').join('\\') + "jsx_SP.jsx\""]);
 	 	} else if (Qt.platform.os == "osx") {
-			//TODO
+			alg.subprocess.start(["open", "-a", alg.settings.value("photoshopPath", "").split(' ').join('\ '), fileDesc.exportPath.split(' ').join('\ ') + "jsx_SP.jsx"]);
 	 	} else if (Qt.platform.os == "linux") {
 			//TODO
 	 	}
