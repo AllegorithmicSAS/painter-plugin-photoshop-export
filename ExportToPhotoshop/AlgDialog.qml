@@ -5,6 +5,7 @@ Window {
     color: "#323232"
     modality: Qt.WindowModal
     signal accepted()
+    property alias contentItem: content
 
     function reload() {}
     function open() {
@@ -14,6 +15,10 @@ Window {
     function close() {
         visible = false
     }
+    function accept() {
+        accepted()
+        close()
+    }
 
     FocusScope {
         focus: true
@@ -21,10 +26,23 @@ Window {
             if (event.key === Qt.Key_Escape) {
                 close()
             }
+            else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                accept()
+            }
         }
     }
 
+    Rectangle {
+        id: content
+        anchors.top: parent.top
+        anchors.bottom: buttons.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        color: "transparent"
+    }
+
     Flow {
+        id: buttons
         anchors.bottom: parent.bottom
         anchors.left: parent.left; anchors.right: parent.right
         anchors.margins: 6
@@ -37,9 +55,9 @@ Window {
         }
         AlgButton {
             text: "Save"
+            isDefaultButton: true
             onClicked: {
-                accepted()
-                close()
+                accept()
             }
         }
     }

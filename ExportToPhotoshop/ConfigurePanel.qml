@@ -10,6 +10,8 @@ AlgDialog {
     title: "configure"
     width: 400
     height: 200
+    minimumWidth: 400
+    minimumHeight: 200
 
     function reload() {
         content.reload()
@@ -31,9 +33,12 @@ AlgDialog {
 
     Rectangle {
         id: content
+        parent: contentItem
         anchors.centerIn: parent
         anchors.fill: parent
+        anchors.topMargin: 12
         color: "transparent"
+        clip: true
 
         function reload() {
             path.reload()
@@ -44,29 +49,27 @@ AlgDialog {
         ColumnLayout {
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.margins: 6
+            anchors.margins: 12
             spacing: 18
 
             ColumnLayout {
                 spacing: 6
 
-                TextEdit {
+                AlgTextEdit {
                     readOnly: true
                     text: "Path to Photoshop"
                     font.bold: true
-                    color: "#C8C8C8"
                 }
 
                 RowLayout {
                     spacing: 6
 
-                    TextEdit {
+                    AlgTextEdit {
                         id: path
-                        clip: true
+                        borderActivated: true
                         wrapMode: TextEdit.Wrap
                         readOnly: true
                         Layout.fillWidth: true
-                        color: "#C8C8C8"
 
                         function reload() {
                             text = alg.settings.value("photoshopPath", "...")
@@ -79,7 +82,7 @@ AlgDialog {
 
                     AlgButton {
                         id: searchPathButton
-                        text: "search"
+                        text: "Set path"
                         onClicked: {
                             // open the search path dialog
                             searchPathDialog.setVisible(true)
@@ -90,12 +93,11 @@ AlgDialog {
 
             RowLayout {
                 spacing: 6
-                TextEdit {
+                AlgTextEdit {
                     readOnly: true
-                    text: "Launch photoshop after process:"
+                    text: "Launch photoshop after export:"
                     Layout.fillWidth: true
                     font.bold: true
-                    color: "#C8C8C8"
                 }
 
                 AlgCheckBox {
@@ -113,12 +115,11 @@ AlgDialog {
 
             RowLayout {
                 spacing: 6
-                TextEdit {
+                AlgTextEdit {
                     readOnly: true
                     text: "Active Padding:"
                     Layout.fillWidth: true
                     font.bold: true
-                    color: "#C8C8C8"
                 }
 
                 AlgCheckBox {
@@ -143,6 +144,11 @@ AlgDialog {
         selectedNameFilter: "Executable files (*)"
         onAccepted: {
             path.text = fileUrl.toString()
+        }
+        onVisibleChanged: {
+            if (!visible) {
+                parent.active()
+            }
         }
     }
 }

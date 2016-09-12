@@ -23,22 +23,11 @@ import QtQuick.Window 2.2
 import QtQuick.Layouts 1.2
 import QtQuick.Dialogs 1.0
 
-Rectangle {
-	id: rect
-	width: 120
-	height: 30
-	border.color: "white"
-	antialiasing: true
-	border.width: 1
-	color: mouseArea.containsMouse ? "black" : "#202020"  
-	
-	Text {
-		id: label
-		anchors.centerIn: parent
-		text: "Export to Photoshop"
-		color: "white" 
-		//font.pointSize: 8; font.bold: true
-	}
+AlgButton {
+    id: rect
+    isDefaultButton:true
+    antialiasing: true
+    text: "Export to Photoshop"
 
 	FileDialog {
 		id: fileDialog
