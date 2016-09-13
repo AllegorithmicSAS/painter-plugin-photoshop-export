@@ -16,12 +16,13 @@ Button {
   id: rect
   antialiasing: true
   width: 24; height: 24
+  property bool loading: false
 
 
   style: ButtonStyle {
        
       background: Image {
-      source: "icons/PSicon.png"
+      source: control.loading ? "icons/PSiconLoading.png" : (control.hovered ? "icons/PSiconHover.png" : "icons/PSicon.png")
       fillMode: Image.PreserveAspectFit
       mipmap: true
       width: control.width; height: control.height
@@ -47,7 +48,9 @@ Button {
 			if (!alg.settings.contains("photoshopPath") && alg.settings.value("launchPhotoshop", false)) {
 				fileDialog.open();
 			} else {
+				rect.loading = true;
 				Photoshop.importPainterDocument();
+				rect.loading = false;
 			}
 		}
 	}
