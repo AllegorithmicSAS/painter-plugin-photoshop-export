@@ -13,8 +13,8 @@ AlgDialog {
   id: configureDialog
   visible: false
   title: "configure"
-  width: 400
-  height: 200
+  width: 500
+  height: 250
   minimumWidth: 400
   minimumHeight: 200
 
@@ -34,12 +34,13 @@ AlgDialog {
 		}
 		alg.settings.setValue("launchPhotoshop", launchPhotoshopCheckBox.checked);
 		alg.settings.setValue("padding", paddingCheckBox.checked);
+        var index = bitDepthComboBox.currentIndex
+        alg.settings.setValue("bitDepth", bitDepthModel.get(index).value);
   }
 
   Rectangle {
     id: content
     parent: contentItem
-    anchors.centerIn: parent
     anchors.fill: parent
     anchors.topMargin: 12
     color: "transparent"
@@ -49,93 +50,143 @@ AlgDialog {
       path.reload()
       launchPhotoshopCheckBox.reload()
       paddingCheckBox.reload()
+      bitDepthComboBox.reload()
     }
 
-    ColumnLayout {
-      anchors.left: parent.left
-      anchors.right: parent.right
-      anchors.margins: 12
-      spacing: 18
+    ScrollView {
+      id: scrollView
+      anchors.fill: parent
+      horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
+      // remove 6 in order to have a right margin when
+      // displaying the content
+      property int viewportWidth: viewport.width - 6
 
       ColumnLayout {
-        spacing: 6
+        spacing: 18
+        clip: true
+        Layout.maximumWidth: scrollView.viewportWidth
 
-        AlgTextEdit {
-          readOnly: true
-          text: "Path to Photoshop"
-          font.bold: true
+        ColumnLayout {
+          spacing: 6
+          Layout.maximumWidth: scrollView.viewportWidth
+
+          AlgTextEdit {
+            readOnly: true
+            text: "Path to Photoshop"
+            font.bold: true
+          }
+
+          RowLayout {
+            spacing: 6
+
+            AlgTextEdit {
+              id: path
+              borderActivated: true
+              wrapMode: TextEdit.Wrap
+              readOnly: true
+              Layout.fillWidth: true
+
+              function reload() {
+                text = alg.settings.value("photoshopPath", "...")
+              }
+
+              Component.onCompleted: {
+                reload()
+              }
+            }
+
+            AlgButton {
+              id: searchPathButton
+              text: "Set path"
+              onClicked: {
+                // open the search path dialog
+                searchPathDialog.setVisible(true)
+              }
+            }
+          }
         }
 
         RowLayout {
           spacing: 6
+          Layout.maximumWidth: scrollView.viewportWidth
 
           AlgTextEdit {
-            id: path
-            borderActivated: true
-            wrapMode: TextEdit.Wrap
             readOnly: true
+            text: "Launch photoshop after export:"
             Layout.fillWidth: true
+            font.bold: true
+          }
+
+          AlgCheckBox {
+            id: launchPhotoshopCheckBox
 
             function reload() {
-              text = alg.settings.value("photoshopPath", "...")
+              checked = alg.settings.value("launchPhotoshop", false);
             }
 
             Component.onCompleted: {
               reload()
             }
           }
+        }
 
-          AlgButton {
-            id: searchPathButton
-            text: "Set path"
-            onClicked: {
-              // open the search path dialog
-              searchPathDialog.setVisible(true)
+        RowLayout {
+          spacing: 6
+          AlgTextEdit {
+            readOnly: true
+            text: "Enable padding:"
+            Layout.fillWidth: true
+            font.bold: true
+          }
+
+          AlgCheckBox {
+            id: paddingCheckBox
+
+            function reload() {
+              checked = alg.settings.value("padding", false);
+            }
+
+            Component.onCompleted: {
+              reload()
             }
           }
         }
-      }
 
-      RowLayout {
-        spacing: 6
-        AlgTextEdit {
-          readOnly: true
-          text: "Launch photoshop after export:"
-          Layout.fillWidth: true
-          font.bold: true
-        }
+        RowLayout {
+          spacing: 6
+          Layout.maximumWidth: scrollView.viewportWidth
 
-        AlgCheckBox {
-          id: launchPhotoshopCheckBox
-
-          function reload() {
-            checked = alg.settings.contains("launchPhotoshop");
+          AlgTextEdit {
+            readOnly: true
+            text: "Export bitdepth:"
+            Layout.fillWidth: true
+            font.bold: true
           }
 
-          Component.onCompleted: {
-            reload()
-          }
-        }
-      }
+          AlgComboBox {
+            id: bitDepthComboBox
+            textRole: "key"
+            Layout.minimumWidth: 150
 
-      RowLayout {
-        spacing: 6
-        AlgTextEdit {
-          readOnly: true
-          text: "Active Padding:"
-          Layout.fillWidth: true
-          font.bold: true
-        }
-
-        AlgCheckBox {
-          id: paddingCheckBox
-
-          function reload() {
-            checked = alg.settings.contains("padding");
-          }
-
-          Component.onCompleted: {
-            reload()
+            model: ListModel {
+              id: bitDepthModel
+              ListElement { key: "Texture set value"; value: -1 }
+              ListElement { key: "8 bits"; value: 8 }
+              ListElement { key: "16 bits"; value: 16 }
+            }
+            function reload() {
+              var bitdepth = alg.settings.value("bitDepth", -1);
+              for (var i = 0; i < bitDepthModel.count; ++i) {
+                var current = bitDepthModel.get(i);
+                if (bitdepth === current.value) {
+                  currentIndex = i;
+                  break
+                }
+              }
+            }
+            Component.onCompleted: {
+              reload()
+            }
           }
         }
       }

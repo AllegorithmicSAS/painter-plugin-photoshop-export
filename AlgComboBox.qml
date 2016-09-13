@@ -7,22 +7,22 @@ import QtQuick 2.3
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 
-Button {
-  property bool isDefaultButton
-  isDefaultButton: false
-
-  style: ButtonStyle {
+ComboBox {
+  style: ComboBoxStyle {
+    // Button background
     background: Rectangle {
-      implicitWidth: 100
+      implicitWidth: 150
       implicitHeight: 25
       border.width: 1
-      border.color: isDefaultButton ? "#C8C8C8" : "#000000"
+      border.color: "#000000"
       radius: 4
       color: control.pressed ? "#323232" : control.hovered ? "#3C3C3C" : "#494949"
     }
+
+    // Label parameters
     label: Component {
       Text {
-        text: control.text
+        text: control.currentText
         font.bold: isDefaultButton
         clip: true
         wrapMode: Text.WordWrap
@@ -32,5 +32,6 @@ Button {
         color: control.pressed ? "#FFFFFF" : control.hovered ? "#00BEF0" : "#C8C8C8"
       }
     }
+    dropDownButtonWidth: 4
   }
 }
