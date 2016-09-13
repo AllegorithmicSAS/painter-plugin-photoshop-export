@@ -5,11 +5,11 @@
 
 function PhotoshopExporter() {
   //Padding's struct
+  this.mapInfo = {}
   if (!alg.settings.value("padding", false)) {
-    this.padding = {padding: "Transparent", dilation: 0};
-  } else {
-    this.padding = {}
+    this.mapInfo = {padding: "Transparent", dilation: 0};
   }
+  this.mapInfo.bitDepth = alg.settings.value("bitDepth", 8);
 
   //Get the project name
   var projectName = alg.project.url().split('/');
@@ -75,7 +75,7 @@ PhotoshopExporter.prototype = {
           this.photoshopScript += "progressBar.channel.value = " + 100/stack.channels.length*(channelId+1) + ";\n";
           //PNG export of a channel snapshot into the path export
           var filename = this.createFilename(".png");
-          alg.mapexport.save([this.materialName, this.stackName, this.channel], filename, this.padding);
+          alg.mapexport.save([this.materialName, this.stackName, this.channel], filename, this.mapInfo);
           //Create a new document into photoshop
           this.photoshopScript += this.newPSDDocumentStr(filename);
           //Browse layers roots forest
@@ -113,7 +113,7 @@ PhotoshopExporter.prototype = {
     if (layer.layers == undefined) {
       //PNG export of the leaf into the path export
       var filename = this.createFilename(layer.uid + ".png");
-      alg.mapexport.save([layer.uid, this.channel], filename, this.padding);
+      alg.mapexport.save([layer.uid, this.channel], filename, this.mapInfo);
       //Create the layer into photoshop
       this.photoshopScript += this.newLayerStr(filename, layer, this.channel);
       //Add his mask if exist
@@ -144,7 +144,7 @@ PhotoshopExporter.prototype = {
   addMask: function(layer) {
     //PNG export of the mask into the path export
     var filename = this.createFilename(layer.uid + "_mask.png");
-    alg.mapexport.save([layer.uid, "mask"], filename, this.padding);
+    alg.mapexport.save([layer.uid, "mask"], filename, this.mapInfo);
     //Create the mask into photoshop
     this.photoshopScript += this.newMaskStr(filename);
   },
