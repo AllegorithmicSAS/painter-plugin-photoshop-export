@@ -42,7 +42,7 @@ AlgDialog {
     id: content
     parent: contentItem
     anchors.fill: parent
-    anchors.topMargin: 12
+    anchors.margins: 12
     color: "transparent"
     clip: true
 

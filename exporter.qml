@@ -7,14 +7,21 @@ import QtQuick 2.3
 import QtQuick.Window 2.2
 import QtQuick.Layouts 1.2
 import QtQuick.Dialogs 1.0
+import QtQuick.Controls 1.4
 
 import "photoshop.js" as Photoshop
 
-AlgButton {
+Button {
   id: rect
-  isDefaultButton:true
   antialiasing: true
-  text: "Export to Photoshop"
+  width: 24; height: 24
+
+  Image {
+    source: "icons/PSicon.png"
+    fillMode: Image.PreserveAspectFit
+    mipmap: true
+    width: parent.width; height: parent.height
+  }
 
 	FileDialog {
 		id: fileDialog
