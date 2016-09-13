@@ -37,7 +37,9 @@ Button {
 		selectedNameFilter: "Executable files (*)"
 		onAccepted: {
 			alg.settings.setValue("photoshopPath", alg.fileIO.urlToLocalFile(fileUrl.toString()));
+			rect.loading = true;
 			Photoshop.importPainterDocument();
+			rect.loading = false;
 		}
 	}
 
