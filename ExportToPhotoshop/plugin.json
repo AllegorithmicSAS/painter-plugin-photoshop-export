@@ -1,5 +1,0 @@
-{
-	"description": "This plugin export layers stacks to photoshop. Each material and channel are exported one PSD file.",
-	"url": "https://github.com/AllegorithmicSAS/painter-plugin-photoshop-export",
-	"version": "1.0.0"
-}
