@@ -197,7 +197,8 @@ function newLayerStr(filename, layer, channel) {
  layerFile.remove(); \n\
  app.activeDocument.activeLayer.opacity = " + blending.opacity + ";\n\
  " + convertBlendingMode(blending.mode, 0) + ";\n\
- app.activeDocument.activeLayer.name = \"" + layer.name + "\";";
+ app.activeDocument.activeLayer.name = \"" + layer.name + "\"; \n\
+ app.activeDocument.activeLayer.rasterize(RasterizeType.ENTIRELAYER);";
 }
 
 /*
