@@ -8,6 +8,7 @@ import QtQuick.Window 2.2
 import QtQuick.Layouts 1.2
 import QtQuick.Dialogs 1.0
 import QtQuick.Controls 1.4
+import QtQuick.Controls.Styles 1.4
 
 import "photoshop.js" as Photoshop
 
@@ -16,11 +17,13 @@ Button {
   antialiasing: true
   width: 24; height: 24
 
-  Image {
-    source: "icons/PSicon.png"
-    fillMode: Image.PreserveAspectFit
-    mipmap: true
-    width: parent.width; height: parent.height
+  style: ButtonStyle {
+      background: Image {
+      source: "icons/PSicon.png"
+      fillMode: Image.PreserveAspectFit
+      mipmap: true
+      width: control.width; height: control.height
+    }
   }
 
 	FileDialog {
