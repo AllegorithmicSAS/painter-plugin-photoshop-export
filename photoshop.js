@@ -11,36 +11,41 @@ function PhotoshopExporter() {
     this.padding = {}
   }
 
+  //Get the project name
+  var projectName = alg.project.url().split('/');
+  projectName = projectName[projectName.length - 1].replace(".spp", "");
+
   //The export path is the working directory
-  this.exportPath = alg.mapexport.exportPath() + "/";
-  try {
-    this.outFile = alg.fileIO.open(this.exportPath + "jsx_SP.jsx", 'w');
+  this.exportPath = alg.mapexport.exportPath() + "/" + projectName + "_photoshop_export/";
+
+  //Add the header photoshop script
+  var headerScript = alg.fileIO.open(alg.plugin_root_directory + "/header.jsx", 'r');
+  this.photoshopScript = headerScript.readAll();
+  headerScript.close();
+
+  //Run the script
+  this.run(this);
+ 
+  //Add the footer photoshop script
+  var footerScript = alg.fileIO.open(alg.plugin_root_directory + "/footer.jsx", 'r');
+  this.photoshopScript += footerScript.readAll();
+  footerScript.close();
+ 
+  try{
+    var scriptFile = alg.fileIO.open(this.exportPath + "/photoshopScript.jsx", 'w');
+    scriptFile.write(this.photoshopScript);
+    scriptFile.close();
   } catch (error) {
     alg.log.error(error.message);
     return;
   }
 
-  //Add the header photoshop script
-  var headerScript = alg.fileIO.open(alg.plugin_root_directory + "/header.jsx", 'r');
-  this.outFile.write(headerScript.readAll());
-  headerScript.close();
-
-  //Run the script
-  this.run(this);
-
-  //Add the footer photoshop script
-  var footerScript = alg.fileIO.open(alg.plugin_root_directory + "/footer.jsx", 'r');
-  this.outFile.write(footerScript.readAll());
-  footerScript.close();
-
-  this.outFile.close();
-
   alg.log.info("Done.");
   if (alg.settings.value("launchPhotoshop", false)) {
     if (Qt.platform.os == "windows") {
-      alg.subprocess.startDetached(["\"" + alg.settings.value("photoshopPath", "") + "\"", "\"" + this.exportPath.split('/').join('\\') + "jsx_SP.jsx\""]);
+      alg.subprocess.startDetached(["\"" + alg.settings.value("photoshopPath", "") + "\"", "\"" + this.exportPath.split('/').join('\\') + "photoshopScript.jsx\""]);
     } else if (Qt.platform.os == "osx") {
-      alg.subprocess.startDetached(["open", "-a", alg.settings.value("photoshopPath", "").split(' ').join('\ '), this.exportPath.split(' ').join('\ ') + "jsx_SP.jsx"]);
+      alg.subprocess.startDetached(["open", "-a", alg.settings.value("photoshopPath", "").split(' ').join('\ '), this.exportPath.split(' ').join('\ ') + "photoshopScript.jsx"]);
     }
   }
 }
@@ -58,7 +63,7 @@ PhotoshopExporter.prototype = {
       var material = doc_str.materials[materialId];
       this.materialName = material.name;
       //Update the progress bar
-      this.outFile.write("progressBar.material.value = " + 100/doc_str.materials.length*(materialId+1) + ";\n");
+      this.photoshopScript += "progressBar.material.value = " + 100/doc_str.materials.length*(materialId+1) + ";\n";
       //Browse stacks
       for (var stackId = 0; stackId < material.stacks.length; ++stackId) {
         var stack = material.stacks[stackId];
@@ -67,33 +72,33 @@ PhotoshopExporter.prototype = {
         for (var channelId = 0; channelId < stack.channels.length; ++channelId) {
           this.channel = stack.channels[channelId];
           //Update the progress bar
-          this.outFile.write("progressBar.channel.value = " + 100/stack.channels.length*(channelId+1) + ";\n");
+          this.photoshopScript += "progressBar.channel.value = " + 100/stack.channels.length*(channelId+1) + ";\n";
           //PNG export of a channel snapshot into the path export
           var filename = this.createFilename(".png");
           alg.mapexport.save([this.materialName, this.stackName, this.channel], filename, this.padding);
           //Create a new document into photoshop
-          this.outFile.write(this.newPSDDocumentStr(filename));
+          this.photoshopScript += this.newPSDDocumentStr(filename);
           //Browse layers roots forest
           for (var layerId = 0; layerId < stack.layers.length; ++layerId) {
             var layer = stack.layers[layerId];
             //Update the progress bar
-            this.outFile.write("progressBar.layer.value = " + 100/stack.layers.length*(layerId+1) + ";\n");
+            this.photoshopScript += "progressBar.layer.value = " + 100/stack.layers.length*(layerId+1) + ";\n";
             //Browse layer tree from root
             this.layersDFS(layer, this);
           }
           //Update the progress bar
-          this.outFile.write("progressBar.layer.value = 0;\n");
+          this.photoshopScript += "progressBar.layer.value = 0;\n";
           //Gamma correction for sRGB channel
           if(this.channel == "basecolor" || this.channel == "diffuse" || this.channel == "specular" || this.channel == "emissive" || this.channel == "transmissive" ) {
-            this.outFile.write(" convert_to_profile(); \n");
+            this.photoshopScript += " convert_to_profile(); \n";
           }
           //Move the snapshot to the document head
-          this.outFile.write("snapshot.move(app.activeDocument.activeLayer, ElementPlacement.PLACEBEFORE);");
+          this.photoshopScript += "snapshot.move(app.activeDocument.activeLayer, ElementPlacement.PLACEBEFORE);";
           //Hide the snapshot
-          this.outFile.write("snapshot.visible = false;");
+          this.photoshopScript += "snapshot.visible = false;";
         }
         //Update the progress bar
-        this.outFile.write("progressBar.channel.value = 0;\n");
+        this.photoshopScript += "progressBar.channel.value = 0;\n";
       }
     }
   },
@@ -110,7 +115,7 @@ PhotoshopExporter.prototype = {
       var filename = this.createFilename(layer.uid + ".png");
       alg.mapexport.save([layer.uid, this.channel], filename, this.padding);
       //Create the layer into photoshop
-      this.outFile.write(this.newLayerStr(filename, layer, this.channel));
+      this.photoshopScript += this.newLayerStr(filename, layer, this.channel);
       //Add his mask if exist
       if (layer.hasMask == true) {
         this.addMask(layer, this);
@@ -119,7 +124,7 @@ PhotoshopExporter.prototype = {
     //The layer is a folder
     else {
       //Create the folder into photoshop
-      this.outFile.write(this.newFolderStr(layer, this.channel));
+      this.photoshopScript += this.newFolderStr(layer, this.channel);
       //Add his mask if exist
       if (layer.hasMask == true) {
         this.addMask(layer, this);
@@ -129,7 +134,7 @@ PhotoshopExporter.prototype = {
         this.layersDFS(layer.layers[layerId], this);
       }
       //Pull folder up
-      this.outFile.write(" folders.pop();\n");
+      this.photoshopScript += " folders.pop();\n";
     }
   },
 
@@ -141,7 +146,7 @@ PhotoshopExporter.prototype = {
     var filename = this.createFilename(layer.uid + "_mask.png");
     alg.mapexport.save([layer.uid, "mask"], filename, this.padding);
     //Create the mask into photoshop
-    this.outFile.write(this.newMaskStr(filename));
+    this.photoshopScript += this.newMaskStr(filename);
   },
 
   /**********Photoshop generation script**********/

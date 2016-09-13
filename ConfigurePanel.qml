@@ -199,7 +199,7 @@ AlgDialog {
     nameFilters: [ "Photoshop files (*.exe *.app)", "All files (*)" ]
     selectedNameFilter: "Executable files (*)"
     onAccepted: {
-      path.text = fileUrl.toString()
+      path.text = alg.fileIO.urlToLocalFile(fileUrl.toString())
     }
     onVisibleChanged: {
       if (!visible) {

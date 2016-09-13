@@ -17,13 +17,16 @@ Button {
   antialiasing: true
   width: 24; height: 24
 
+
   style: ButtonStyle {
+       
       background: Image {
       source: "icons/PSicon.png"
       fillMode: Image.PreserveAspectFit
       mipmap: true
       width: control.width; height: control.height
     }
+
   }
 
 	FileDialog {
@@ -32,7 +35,7 @@ Button {
 		nameFilters: [ "Photoshop files (*.exe *.app)", "All files (*)" ]
 		selectedNameFilter: "Executable files (*)"
 		onAccepted: {
-			alg.settings.setValue("photoshopPath", alg.fileIO.urlToLocalFile(fileUrls[0]));
+			alg.settings.setValue("photoshopPath", alg.fileIO.urlToLocalFile(fileUrl.toString()));
 			Photoshop.importPainterDocument();
 		}
 	}
