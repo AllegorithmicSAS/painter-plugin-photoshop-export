@@ -95,11 +95,16 @@ function run(fileDesc) {
         if(fileDesc.channel == "basecolor" || fileDesc.channel == "diffuse" || fileDesc.channel == "specular" || fileDesc.channel == "emissive" || fileDesc.channel == "transmissive" ) {
           fileDesc.outFile.write(" convert_to_profile(); \n");
         }
+        //Move the snapshot to the document head
+        fileDesc.outFile.write("snapshot.move(app.activeDocument.activeLayer, ElementPlacement.PLACEBEFORE);");
+        //Hide the snapshot
+        fileDesc.outFile.write("snapshot.visible = false;");
       }
       //Update the progress bar
       fileDesc.outFile.write("progressBar.channel.value = 0;\n");
     }
   }
+
 }
 
 /*
@@ -159,7 +164,9 @@ function newPSDDocumentStr(filename) {
  open(exportFile); \n\
  exportFile.remove();
  var folders = []; \n\
- folders.push(app.activeDocument);";
+ folders.push(app.activeDocument); \n\
+ var snapshot = app.activeDocument.activeLayer; \n\
+ snapshot.name = \"snapshot\"; ";
 }
 
 /*
