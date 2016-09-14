@@ -86,19 +86,21 @@ PhotoshopExporter.prototype = {
             //Browse layer tree from root
             this.layersDFS(layer, this);
           }
+          //Rasterize all layers
+          this.photoshopScript += "app.activeDocument.rasterizeAllLayers(); \n";
           //Update the progress bar
-          this.photoshopScript += "progressBar.layer.value = 0;\n";
+          this.photoshopScript += "progressBar.layer.value = 0; \n";
           //Gamma correction for sRGB channel
           if(this.channel == "basecolor" || this.channel == "diffuse" || this.channel == "specular" || this.channel == "emissive" || this.channel == "transmissive" ) {
             this.photoshopScript += " convert_to_profile(); \n";
           }
           //Move the snapshot to the document head
-          this.photoshopScript += "snapshot.move(app.activeDocument.activeLayer, ElementPlacement.PLACEBEFORE);";
+          this.photoshopScript += "snapshot.move(app.activeDocument.activeLayer, ElementPlacement.PLACEBEFORE); \n";
           //Hide the snapshot
-          this.photoshopScript += "snapshot.visible = false;";
+          this.photoshopScript += "snapshot.visible = false; \n";
         }
         //Update the progress bar
-        this.photoshopScript += "progressBar.channel.value = 0;\n";
+        this.photoshopScript += "progressBar.channel.value = 0; \n";
       }
     }
   },
@@ -204,8 +206,7 @@ PhotoshopExporter.prototype = {
    layerFile.remove(); \n\
    app.activeDocument.activeLayer.opacity = " + blending.opacity + ";\n\
    " + this.convertBlendingMode(blending.mode, 0) + ";\n\
-   app.activeDocument.activeLayer.name = \"" + layer.name + "\"; \n\
-   app.activeDocument.activeLayer.rasterize(RasterizeType.ENTIRELAYER);";
+   app.activeDocument.activeLayer.name = \"" + layer.name + "\"; ";
   },
 
   /*
