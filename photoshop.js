@@ -3,6 +3,10 @@
 // This software may be modified and distributed under the terms
 // of the MIT license.  See the LICENSE file for details.
 
+function logUserInfo(str) {
+  alg.log.info("<font color=#00FF00>"+str+"</font>")
+}
+
 function ExportConfig() {
   this.padding = "Infinite"
   this.dilation = 0
@@ -60,8 +64,9 @@ function PhotoshopExporter() {
     return;
   }
 
-  alg.log.info("Done.");
+  logUserInfo("Export done");
   if (alg.settings.value("launchPhotoshop", false)) {
+    logUserInfo("Starting Photoshop...");
     if (Qt.platform.os == "windows") {
       alg.subprocess.startDetached(["\"" + alg.settings.value("photoshopPath", "") + "\"", "\"" + this.exportPath.split('/').join('\\') + "photoshopScript.jsx\""]);
     } else if (Qt.platform.os == "osx") {
@@ -103,6 +108,7 @@ PhotoshopExporter.prototype = {
           alg.mapexport.save([this.materialName, this.stackName, this.channel], filename, exportConfig);
           //Create a new document into photoshop
           this.photoshopScript += this.newPSDDocumentStr(filename);
+          logUserInfo("Export the channel " + this.channel + " of the material " + this.materialName);
           //Browse layers roots forest
           for (var layerId = 0; layerId < stack.layers.length; ++layerId) {
             var layer = stack.layers[layerId];
@@ -161,7 +167,7 @@ PhotoshopExporter.prototype = {
         this.layersDFS(layer.layers[layerId], this);
       }
       //Pull folder up
-      this.photoshopScript += " folders.pop();\n";
+      this.photoshopScript += " app.activeDocument.activeLayer = folders.pop();\n";
     }
   },
 

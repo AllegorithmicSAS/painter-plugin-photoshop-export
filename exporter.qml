@@ -70,7 +70,7 @@ Button {
 
   FileDialog {
     id: fileDialog
-    title: "Choose a Photoshop executable file..."
+    title: "Please locate Photoshop..."
     nameFilters: [ "Photoshop files (*.exe *.app)", "All files (*)" ]
     selectedNameFilter: "Executable files (*)"
     onAccepted: {
