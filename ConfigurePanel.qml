@@ -63,7 +63,6 @@ AlgDialog {
 
       ColumnLayout {
         spacing: 18
-        clip: true
         Layout.maximumWidth: scrollView.viewportWidth
 
         ColumnLayout {
