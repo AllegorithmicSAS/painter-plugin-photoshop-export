@@ -42,7 +42,7 @@ function PhotoshopExporter() {
 
   alg.log.warn("<font color=#00FF00> Export done");
   if (alg.settings.value("launchPhotoshop", false)) {
-    alg.log.warn("<font color=#00FF00> Start Photoshop");
+    alg.log.warn("<font color=#00FF00> Starting Photoshop...");
     if (Qt.platform.os == "windows") {
       alg.subprocess.startDetached(["\"" + alg.settings.value("photoshopPath", "") + "\"", "\"" + this.exportPath.split('/').join('\\') + "photoshopScript.jsx\""]);
     } else if (Qt.platform.os == "osx") {
