@@ -128,6 +128,7 @@ PhotoshopExporter.prototype = {
           }
           //Move the snapshot to the document head
           this.photoshopScript += "snapshot.move(app.activeDocument.activeLayer, ElementPlacement.PLACEBEFORE); \n";
+          this.photoshopScript += "app.activeDocument.activeLayer = snapshot; \n";
           //Hide the snapshot
           this.photoshopScript += "snapshot.visible = false; \n";
           //Save the psd
