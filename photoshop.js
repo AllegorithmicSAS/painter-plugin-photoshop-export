@@ -136,7 +136,7 @@ PhotoshopExporter.prototype = {
         this.layersDFS(layer.layers[layerId], this);
       }
       //Pull folder up
-      this.photoshopScript += " folders.pop();\n";
+      this.photoshopScript += " app.activeDocument.activeLayer = folders.pop();\n";
     }
   },
 
