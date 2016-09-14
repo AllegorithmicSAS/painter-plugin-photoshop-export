@@ -3,6 +3,10 @@
 // This software may be modified and distributed under the terms
 // of the MIT license.  See the LICENSE file for details.
 
+function logUserInfo(str) {
+  alg.log.info("<font color=#00FF00>"+str+"</font>")
+}
+
 function PhotoshopExporter() {
   //Padding's struct
   this.mapInfo = {}
@@ -25,12 +29,12 @@ function PhotoshopExporter() {
 
   //Run the script
   this.run(this);
- 
+
   //Add the footer photoshop script
   var footerScript = alg.fileIO.open(alg.plugin_root_directory + "/footer.jsx", 'r');
   this.photoshopScript += footerScript.readAll();
   footerScript.close();
- 
+
   try{
     var scriptFile = alg.fileIO.open(this.exportPath + "/photoshopScript.jsx", 'w');
     scriptFile.write(this.photoshopScript);
@@ -40,9 +44,9 @@ function PhotoshopExporter() {
     return;
   }
 
-  alg.log.warn("<font color=#00FF00> Export done");
+  logUserInfo("Export done");
   if (alg.settings.value("launchPhotoshop", false)) {
-    alg.log.warn("<font color=#00FF00> Starting Photoshop...");
+    logUserInfo("Starting Photoshop...");
     if (Qt.platform.os == "windows") {
       alg.subprocess.startDetached(["\"" + alg.settings.value("photoshopPath", "") + "\"", "\"" + this.exportPath.split('/').join('\\') + "photoshopScript.jsx\""]);
     } else if (Qt.platform.os == "osx") {
@@ -79,7 +83,7 @@ PhotoshopExporter.prototype = {
           alg.mapexport.save([this.materialName, this.stackName, this.channel], filename, this.mapInfo);
           //Create a new document into photoshop
           this.photoshopScript += this.newPSDDocumentStr(filename);
-          alg.log.warn("<font color=#00FF00> " + "Export the channel " + this.channel + " of the material " + this.materialName);
+          logUserInfo("Export the channel " + this.channel + " of the material " + this.materialName);
           //Browse layers roots forest
           for (var layerId = 0; layerId < stack.layers.length; ++layerId) {
             var layer = stack.layers[layerId];
