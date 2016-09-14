@@ -40,8 +40,9 @@ function PhotoshopExporter() {
     return;
   }
 
-  alg.log.info("Done.");
+  alg.log.warn("<font color=#00FF00> Export done");
   if (alg.settings.value("launchPhotoshop", false)) {
+    alg.log.warn("<font color=#00FF00> Start Photoshop");
     if (Qt.platform.os == "windows") {
       alg.subprocess.startDetached(["\"" + alg.settings.value("photoshopPath", "") + "\"", "\"" + this.exportPath.split('/').join('\\') + "photoshopScript.jsx\""]);
     } else if (Qt.platform.os == "osx") {
@@ -78,6 +79,7 @@ PhotoshopExporter.prototype = {
           alg.mapexport.save([this.materialName, this.stackName, this.channel], filename, this.mapInfo);
           //Create a new document into photoshop
           this.photoshopScript += this.newPSDDocumentStr(filename);
+          alg.log.warn("<font color=#00FF00> " + "Export the channel " + this.channel + " of the material " + this.materialName);
           //Browse layers roots forest
           for (var layerId = 0; layerId < stack.layers.length; ++layerId) {
             var layer = stack.layers[layerId];
