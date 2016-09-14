@@ -7,13 +7,33 @@ function logUserInfo(str) {
   alg.log.info("<font color=#00FF00>"+str+"</font>")
 }
 
-function PhotoshopExporter() {
-  //Padding's struct
-  this.mapInfo = {}
-  if (!alg.settings.value("padding", false)) {
-    this.mapInfo = {padding: "Transparent", dilation: 0};
+function ExportConfig() {
+  this.padding = "Infinite"
+  this.dilation = 0
+  this.bitDepth = 8
+  this.keepAlpha = true
+}
+
+ExportConfig.prototype = {
+  clone: function() {
+    var conf = new ExportConfig
+    conf.padding = this.padding
+    conf.dilation = this.dilation
+    conf.bitDepth = this.bitDepth
+    conf.keepAlpha = this.keepAlpha
+    return conf
+  },
+
+  usePadding : function(val) {
+    this.padding = (val === true) ? "Infinite" : "Transparent"
   }
-  this.mapInfo.bitDepth = alg.settings.value("bitDepth", 8);
+}
+
+function PhotoshopExporter() {
+
+  //Padding's struct
+  this.exportConfig = new ExportConfig()
+  this.exportConfig.usePadding(alg.settings.value("padding", false))
 
   //Get the project name
   var projectName = alg.project.url().split('/');
@@ -76,11 +96,16 @@ PhotoshopExporter.prototype = {
         //Browse channels
         for (var channelId = 0; channelId < stack.channels.length; ++channelId) {
           this.channel = stack.channels[channelId];
+          var channelFormat = alg.mapexport.channelFormat([this.materialName, this.stackName],this.channel)
+          var bitDepth = alg.settings.value("bitDepth", -1)
+          this.exportConfig.bitDepth = bitDepth == -1 ? channelFormat.bitDepth : bitDepth
           //Update the progress bar
           this.photoshopScript += "progressBar.channel.value = " + 100/stack.channels.length*(channelId+1) + ";\n";
           //PNG export of a channel snapshot into the path export
           var filename = this.createFilename(".png");
-          alg.mapexport.save([this.materialName, this.stackName, this.channel], filename, this.mapInfo);
+          var exportConfig = this.exportConfig.clone()
+          exportConfig.keepAlpha = false
+          alg.mapexport.save([this.materialName, this.stackName, this.channel], filename, exportConfig);
           //Create a new document into photoshop
           this.photoshopScript += this.newPSDDocumentStr(filename);
           logUserInfo("Export the channel " + this.channel + " of the material " + this.materialName);
@@ -121,7 +146,7 @@ PhotoshopExporter.prototype = {
     if (layer.layers == undefined) {
       //PNG export of the leaf into the path export
       var filename = this.createFilename(layer.uid + ".png");
-      alg.mapexport.save([layer.uid, this.channel], filename, this.mapInfo);
+      alg.mapexport.save([layer.uid, this.channel], filename, this.exportConfig);
       //Create the layer into photoshop
       this.photoshopScript += this.newLayerStr(filename, layer, this.channel);
       //Add his mask if exist
@@ -152,7 +177,7 @@ PhotoshopExporter.prototype = {
   addMask: function(layer) {
     //PNG export of the mask into the path export
     var filename = this.createFilename(layer.uid + "_mask.png");
-    alg.mapexport.save([layer.uid, "mask"], filename, this.mapInfo);
+    alg.mapexport.save([layer.uid, "mask"], filename, this.exportConfig);
     //Create the mask into photoshop
     this.photoshopScript += this.newMaskStr(filename);
   },
