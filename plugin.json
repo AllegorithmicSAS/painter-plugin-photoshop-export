@@ -1,0 +1,6 @@
+{
+	"description": "This plugin exports a painter project to photoshop. Creates one photoshop document for each channel of each stack, preserving the stack hierarchy (layers and groups).",
+	"url": "https://github.com/AllegorithmicSAS/painter-plugin-photoshop-export",
+	"version": "1.0.0",
+	"license": "<a href=\"https://opensource.org/licenses/MIT\">MIT</a>"
+}
