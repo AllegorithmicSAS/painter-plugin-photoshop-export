@@ -36,8 +36,8 @@ function PhotoshopExporter() {
   this.exportConfig.usePadding(alg.settings.value("padding", false))
 
   //Get the project name
-  var projectName = alg.project.url().split('/');
-  projectName = projectName[projectName.length - 1].replace(".spp", "");
+  var projectName = alg.project.name()
+  alg.log.info(projectName)
 
   //The export path is the working directory
   this.exportPath = alg.mapexport.exportPath() + "/" + projectName + "_photoshop_export/";
