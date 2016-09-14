@@ -133,7 +133,6 @@ PhotoshopExporter.prototype = {
           this.photoshopScript += "snapshot.visible = false; \n";
           //Save the psd
           this.photoshopScript += " app.activeDocument.saveAs(File(\"" + this.exportPath + this.materialName + "_" + this.stackName + "_"  + this.channel + "\")); \n";
-          logUserInfo(this.exportPath + this.materialName + "_" + this.stackName + "_" + this.channel + ".psd");
         }
         //Update the progress bar
         this.photoshopScript += "progressBar.channel.value = 0; \n";
