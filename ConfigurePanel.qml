@@ -170,7 +170,7 @@ AlgDialog {
 
             model: ListModel {
               id: bitDepthModel
-              //ListElement { key: "Texture set value"; value: -1 }
+              ListElement { key: "Texture set value"; value: -1 }
               ListElement { key: "8 bits"; value: 8 }
               ListElement { key: "16 bits"; value: 16 }
             }
