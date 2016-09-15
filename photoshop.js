@@ -158,7 +158,7 @@ PhotoshopExporter.prototype = {
           //Hide the snapshot
           this.photoshopScript += "snapshot.visible = false; \n";
           //Save the psd
-          this.photoshopScript += " app.activeDocument.saveAs(File(\"" + this.exportPath + this.materialName + "_" + this.stackName + "_"  + this.channel + "\")); \n";
+          this.photoshopScript += " app.activeDocument.saveAs(File(\"" + this.createFilename() + "\")); \n";
         }
         //Update the progress bar
         this.photoshopScript += "progressBar.channel.value = 0; \n";
@@ -175,7 +175,7 @@ PhotoshopExporter.prototype = {
     //The layer is a leaf
     if (layer.layers == undefined) {
       //PNG export of the leaf into the path export
-      var filename = this.createFilename(layer.uid + ".png");
+      var filename = this.createFilename("_" + layer.uid + ".png");
       alg.mapexport.save([layer.uid, this.channel], filename, this.exportConfig);
       progressLayer();
       //Create the layer into photoshop
@@ -207,7 +207,7 @@ PhotoshopExporter.prototype = {
    */
   addMask: function(layer, progressLayer) {
     //PNG export of the mask into the path export
-    var filename = this.createFilename(layer.uid + "_mask.png");
+    var filename = this.createFilename("_" + layer.uid + "_mask.png");
     alg.mapexport.save([layer.uid, "mask"], filename, this.exportConfig);
     progressLayer();
     //Create the mask into photoshop
@@ -217,7 +217,8 @@ PhotoshopExporter.prototype = {
   /**********Photoshop generation script**********/
 
   createFilename: function(concate) {
-    return this.exportPath + this.materialName + "_" +this.stackName + "_" + this.channel + "_" + concate;
+    concate = concate || ''
+    return (this.exportPath + this.materialName + "_" +this.stackName + "_" + this.channel + concate).replace("__", "_");
   },
 
   /*
