@@ -8,7 +8,7 @@ import QtQuick.Window 2.2
 
 Window {
   color: "#323232"
-  modality: Qt.WindowModal
+  modality: Qt.ApplicationModal
   visible: false
   property bool screenCentered: true
 

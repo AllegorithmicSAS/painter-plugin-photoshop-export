@@ -81,6 +81,7 @@ Button {
     minimumHeight: 125
     maximumWidth: 250
     maximumHeight: 125
+    flags: Qt.Dialog | Qt.WindowTitleHint
     function reload() {
       progressText.text = "Export in progress..."
     }
