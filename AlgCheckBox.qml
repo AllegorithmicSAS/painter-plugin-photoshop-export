@@ -18,7 +18,7 @@ CheckBox {
       color: "#3C3C3C"
 
       Rectangle {
-        color: control.checked ? "#008EB4" : "#323232"
+        color: control.checked ? "#00BCF2" : "#323232"
         border.color: "#000000"
         radius: 1
         anchors.margins: 3

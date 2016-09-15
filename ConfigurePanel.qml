@@ -22,12 +22,6 @@ AlgDialog {
     content.reload()
   }
 
-  Component.onCompleted: {
-    // move the popup at the center of the screen when completed
-    x = Screen.width / 2 - width / 2
-    y = Screen.height / 2 - height / 2
-  }
-
   onAccepted: {
     if (path.text != "...") {
 			alg.settings.setValue("photoshopPath", path.text);

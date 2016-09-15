@@ -6,20 +6,10 @@
 import QtQuick 2.3
 import QtQuick.Window 2.2
 
-Window {
-  color: "#323232"
-  modality: Qt.WindowModal
+AlgModalWindow {
   signal accepted()
   property alias contentItem: content
 
-  function reload() {}
-  function open() {
-    visible = true
-    reload()
-  }
-  function close() {
-    visible = false
-  }
   function accept() {
     accepted()
     close()
