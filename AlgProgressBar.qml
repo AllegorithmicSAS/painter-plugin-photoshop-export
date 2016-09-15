@@ -33,11 +33,11 @@ ProgressBar {
                     Repeater {
                         Rectangle {
                             color: "transparent"
-                            width: 60 ; height: control.height
+                            width: 120 ; height: control.height
 
                             LinearGradient {
                                 anchors.fill: parent
-                                visible: index % 3 ? false : true
+                                visible: index % 4 ? false : true
                                 start: Qt.point(0, 0)
                                 end: Qt.point(parent.width, 0)
                                 gradient: Gradient {
@@ -46,11 +46,11 @@ ProgressBar {
                                 }
                             }
                         }
-                        model: control.width / 60 + 2
+                        model: control.width / 120 + 2
                     }
                     XAnimator on x {
-                        from: -60 ; to: 120
-                        duration: 1500
+                        from: -120 ; to: 360
+                        duration: 1000
                         loops: Animation.Infinite
                         running: control.indeterminate
                     }
