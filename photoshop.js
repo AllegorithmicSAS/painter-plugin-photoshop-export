@@ -104,6 +104,10 @@ PhotoshopExporter.prototype = {
     function createProgressMethod(progressBar, total) {
       var progression = 1;
       return function() {
+        if (progressBar === "layer") {
+          var stackPath = [self.materialName, self.stackName, self.channel].filter(function(e) {return e}).join("/");
+          self.logUserInfo("Exporting " + stackPath + " layers and masks " + progression + "/" + total + "...");
+        }
         self.photoshopScript +=
           "progressBar." + progressBar + ".value = " + 100/total*(progression++) + ";\n";
       }
@@ -140,7 +144,6 @@ PhotoshopExporter.prototype = {
 
           //Create a new document into photoshop
           this.photoshopScript += this.newPSDDocumentStr(filename);
-          this.logUserInfo("Export the channel " + this.channel + " of the material " + this.materialName);
           //Browse layers roots forest
           var progressLayer = createProgressMethod("layer", totalLayers);
           for (var layerId = 0; layerId < stack.layers.length; ++layerId) {

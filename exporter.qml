@@ -103,7 +103,6 @@ Button {
               id: progressText
               anchors.centerIn: parent
               width: parent.width
-              font.bold: true
               wrapMode: TextEdit.Wrap
               clip: true
             }
