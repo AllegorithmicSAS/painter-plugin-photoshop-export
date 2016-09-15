@@ -77,11 +77,11 @@ Button {
     id: progressWindow
     width: 250
     height: 125
-    minimumWidth: 250
+    minimumWidth: 400
     minimumHeight: 125
-    maximumWidth: 250
+    maximumWidth: 400
     maximumHeight: 125
-    flags: Qt.Dialog | Qt.WindowTitleHint
+    flags: Qt.Dialog | Qt.CustomizeWindowHint | Qt.WindowTitleHint | Qt.WindowSystemMenuHint
     function reload() {
       progressText.text = "Export in progress..."
     }
