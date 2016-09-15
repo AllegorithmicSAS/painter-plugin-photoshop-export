@@ -20,10 +20,6 @@ Window {
   function close() {
     visible = false
   }
-  function accept() {
-    accepted()
-    close()
-  }
 
   Component.onCompleted: {
     if (screenCentered) {

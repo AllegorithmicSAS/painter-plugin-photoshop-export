@@ -10,6 +10,11 @@ AlgModalWindow {
   signal accepted()
   property alias contentItem: content
 
+  function accept() {
+    accepted()
+    close()
+  }
+
   FocusScope {
     focus: true
     Keys.onPressed: {
