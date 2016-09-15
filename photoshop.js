@@ -132,7 +132,7 @@ PhotoshopExporter.prototype = {
           //Hide the snapshot
           this.photoshopScript += "snapshot.visible = false; \n";
           //Save the psd
-          this.photoshopScript += " app.activeDocument.saveAs(File(\"" + this.exportPath + this.materialName + "_" + this.stackName + "_"  + this.channel + "\")); \n";
+          this.photoshopScript += " app.activeDocument.saveAs(File(\"" + this.createFilename() + "\")); \n";
         }
         //Update the progress bar
         this.photoshopScript += "progressBar.channel.value = 0; \n";
@@ -189,7 +189,7 @@ PhotoshopExporter.prototype = {
   /**********Photoshop generation script**********/
 
   createFilename: function(concate) {
-    return this.exportPath + this.materialName + "_" +this.stackName + "_" + this.channel + "_" + concate;
+    return (this.exportPath + this.materialName + "_" +this.stackName + "_" + this.channel + "_" + concate).replace("__", "_");
   },
 
   /*
