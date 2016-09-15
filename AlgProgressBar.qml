@@ -18,7 +18,7 @@ ProgressBar {
             implicitHeight: 24
         }
         progress: Rectangle {
-            color: control.indeterminate ? "transparent" : "#323232"
+            color: control.indeterminate ? "transparent" : "#008EB4"
 
             // Indeterminate animation by animating alternating stripes:
             Item {
@@ -42,7 +42,7 @@ ProgressBar {
                                 end: Qt.point(parent.width, 0)
                                 gradient: Gradient {
                                     GradientStop { position: 0.0; color: "#323232" }
-                                    GradientStop { position: 1.0; color: "#901326" }
+                                    GradientStop { position: 1.0; color: "#008EB4" }
                                 }
                             }
                         }
