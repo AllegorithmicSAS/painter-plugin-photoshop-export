@@ -15,13 +15,13 @@ import "photoshop.js" as Photoshop
 Button {
   id: rect
   antialiasing: true
-  width: 24; height: 24
+  width: 30; height: 30
   tooltip: "Export to Photoshop"
   property bool loading: false
 
   style: ButtonStyle {
     background: Rectangle {
-      anchors.fill: control
+      width: control.width; height: control.height
       color: "transparent"
 
       Image {
@@ -42,7 +42,6 @@ Button {
 
         RotationAnimation on rotation {
           running: control.loading
-          paused: !control.loading
           from: 0
           to: 360
           duration: 500
@@ -54,16 +53,71 @@ Button {
 
   QtObject {
     id: internal
+    function updateProgressWindow(text) {
+        progressText.text = text
+    }
+
     function launchImport() {
       try {
         loading = true;
-        Photoshop.importPainterDocument();
+        progressWindow.open()
+        Photoshop.importPainterDocument(updateProgressWindow);
       }
       catch (e) {
         alg.log.warn(e.message)
       }
       finally {
+        progressWindow.close()
         loading = false;
+      }
+    }
+  }
+
+  AlgModalWindow {
+    id: progressWindow
+    width: 250
+    height: 125
+    minimumWidth: 250
+    minimumHeight: 125
+    maximumWidth: 250
+    maximumHeight: 125
+    function reload() {
+      progressText.text = "Export in progress..."
+    }
+
+    Rectangle {
+      id: content
+      color: "transparent"
+      anchors.fill: parent
+      anchors.margins: 12
+
+      ColumnLayout {
+        spacing: 18
+        anchors.fill: parent
+
+        Rectangle {
+            color: "transparent"
+            Layout.fillWidth: true
+            AlgTextEdit {
+              id: progressText
+              anchors.centerIn: parent
+              width: parent.width
+              font.bold: true
+              wrapMode: TextEdit.Wrap
+              clip: true
+            }
+        }
+
+        Rectangle {
+            color: "transparent"
+            Layout.fillWidth: true
+            AlgProgressBar {
+              id: progressBar
+              anchors.centerIn: parent
+              width: parent.width
+              indeterminate: true
+            }
+        }
       }
     }
   }

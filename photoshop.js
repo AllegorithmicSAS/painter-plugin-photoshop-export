@@ -3,10 +3,6 @@
 // This software may be modified and distributed under the terms
 // of the MIT license.  See the LICENSE file for details.
 
-function logUserInfo(str) {
-  alg.log.info("<font color=#00FF00>"+str+"</font>")
-}
-
 function ExportConfig() {
   this.padding = "Infinite"
   this.dilation = 0
@@ -29,7 +25,16 @@ ExportConfig.prototype = {
   }
 }
 
-function PhotoshopExporter() {
+function PhotoshopExporter(callback) {
+  this.logUserInfo =
+    function logUserInfo(str) {
+      if (callback) {
+        callback(str)
+      }
+      else {
+        alg.log.info("<font color=#00FF00>"+str+"</font>")
+      }
+    }
 
   //Padding's struct
   this.exportConfig = new ExportConfig()
@@ -63,9 +68,9 @@ function PhotoshopExporter() {
     return;
   }
 
-  logUserInfo("Export done");
+  this.logUserInfo("Export done");
   if (alg.settings.value("launchPhotoshop", false)) {
-    logUserInfo("Starting Photoshop...");
+    this.logUserInfo("Starting Photoshop...");
     if (Qt.platform.os == "windows") {
       alg.subprocess.startDetached(["\"" + alg.settings.value("photoshopPath", "") + "\"", "\"" + this.exportPath.split('/').join('\\') + "photoshopScript.jsx\""]);
     } else if (Qt.platform.os == "osx") {
@@ -108,7 +113,7 @@ PhotoshopExporter.prototype = {
           
           //Create a new document into photoshop
           this.photoshopScript += this.newPSDDocumentStr(filename);
-          logUserInfo("Export the channel " + this.channel + " of the material " + this.materialName);
+          this.logUserInfo("Export the channel " + this.channel + " of the material " + this.materialName);
           //Browse layers roots forest
           for (var layerId = 0; layerId < stack.layers.length; ++layerId) {
             var layer = stack.layers[layerId];
@@ -298,6 +303,6 @@ PhotoshopExporter.prototype = {
 
 }
 
-function importPainterDocument() {
-  new PhotoshopExporter();
+function importPainterDocument(callback) {
+  new PhotoshopExporter(callback);
 }

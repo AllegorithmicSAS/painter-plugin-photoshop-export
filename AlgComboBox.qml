@@ -23,7 +23,6 @@ ComboBox {
     label: Component {
       Text {
         text: control.currentText
-        font.bold: isDefaultButton
         clip: true
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
