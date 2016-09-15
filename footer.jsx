@@ -59,6 +59,35 @@ function new_layer()
 	desc.putReference(idnull, ref);
 	executeAction(idMk, desc, DialogModes.NO);
 }
+function fillSolidColour(R, G, B)
+{
+  var id117 = charIDToTypeID( "Mk  " );
+  var desc25 = new ActionDescriptor();
+  var id118 = charIDToTypeID( "null" );
+  var ref13 = new ActionReference();
+  var id119 = stringIDToTypeID( "contentLayer" );
+  ref13.putClass( id119 );
+  desc25.putReference( id118, ref13 );
+  var id120 = charIDToTypeID( "Usng" );
+  var desc26 = new ActionDescriptor();
+  var id121 = charIDToTypeID( "Type" );
+  var desc27 = new ActionDescriptor();
+  var id122 = charIDToTypeID( "Clr " );
+  var desc28 = new ActionDescriptor();
+  var id123 = charIDToTypeID( "Rd  " );
+  desc28.putDouble( id123, R ); //red
+  var id124 = charIDToTypeID( "Grn " );
+  desc28.putDouble( id124, G ); //green
+  var id125 = charIDToTypeID( "Bl  " );
+  desc28.putDouble( id125, B ); //blue
+  var id126 = charIDToTypeID( "RGBC" );
+  desc27.putObject( id122, id126, desc28 );
+  var id127 = stringIDToTypeID( "solidColorLayer" );
+  desc26.putObject( id121, id127, desc27 );
+  var id128 = stringIDToTypeID( "contentLayer" );
+  desc25.putObject( id120, id128, desc26 );
+  executeAction( id117, desc25, DialogModes.NO );
+}
 function send_backward()
 {
 	var id_mov = charIDToTypeID('move');

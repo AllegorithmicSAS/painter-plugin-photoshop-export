@@ -160,8 +160,13 @@ PhotoshopExporter.prototype = {
           if(this.channel == "basecolor" || this.channel == "diffuse" || this.channel == "specular" || this.channel == "emissive" || this.channel == "transmissive" ) {
             this.photoshopScript += " convert_to_profile(); \n";
           }
+          // Add default background in normal channel
+          if(this.channel === "normal") {
+            this.photoshopScript += this.newFillLayerStr("Background", {R:128, G:128, B:255});
+            this.photoshopScript += "app.activeDocument.activeLayer.move(app.activeDocument, ElementPlacement.PLACEATEND); \n";
+          }
           //Move the snapshot to the document head
-          this.photoshopScript += "snapshot.move(app.activeDocument.activeLayer, ElementPlacement.PLACEBEFORE); \n";
+          this.photoshopScript += "snapshot.move(app.activeDocument, ElementPlacement.PLACEATBEGINNING); \n";
           this.photoshopScript += "app.activeDocument.activeLayer = snapshot; \n";
           //Hide the snapshot
           this.photoshopScript += "snapshot.visible = false; \n";
@@ -283,6 +288,17 @@ PhotoshopExporter.prototype = {
    " + this.convertBlendingMode(blending.mode, 0) + ";\n\
    app.activeDocument.activeLayer.name = \"" + layer.name + "\";\n\
    app.activeDocument.activeLayer.visible = " + (layer.enabled? "true" : "false") + ";";
+  },
+
+  /*
+   * Return the string to create a new fill layer
+   */
+  newFillLayerStr: function(name, color) {
+    return "\n\n //Add fill layer \n\
+   var layer = folders[folders.length - 1].artLayers.add(); \n\
+   app.activeDocument.activeLayer.name = \"" + name + "\"; \n\
+   fillSolidColour(" + color.R + "," + color.G + "," + color.B + ");\n\
+   ";
   },
 
   /*
