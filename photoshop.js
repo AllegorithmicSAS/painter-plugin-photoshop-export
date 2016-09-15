@@ -278,7 +278,8 @@ PhotoshopExporter.prototype = {
    layerFile.remove(); \n\
    app.activeDocument.activeLayer.opacity = " + blending.opacity + ";\n\
    " + this.convertBlendingMode(blending.mode, 0) + ";\n\
-   app.activeDocument.activeLayer.name = \"" + layer.name + "\"; ";
+   app.activeDocument.activeLayer.name = \"" + layer.name + "\";\n\
+   app.activeDocument.activeLayer.visible = " + (layer.enabled? "true" : "false") + ";";
   },
 
   /*
