@@ -162,7 +162,7 @@ PhotoshopExporter.prototype = {
           }
           // Add default background in normal channel
           if(this.channel === "normal") {
-            this.photoshopScript += this.newFillLayerStr("Background", {R:128, G:128, B:256});
+            this.photoshopScript += this.newFillLayerStr("Background", {R:128, G:128, B:255});
             this.photoshopScript += "app.activeDocument.activeLayer.move(app.activeDocument, ElementPlacement.PLACEATEND); \n";
           }
           //Move the snapshot to the document head
