@@ -81,43 +81,69 @@ PhotoshopExporter.prototype = {
   * Browsing of all layers into the document structure
   */
   run: function() {
+    function documentNbStacks(document) {
+      return document.materials
+        .map(function(m) {return m.stacks.length})
+        .reduce(function(a, b){ return a + b}, 0);
+    }
+    function elementNbLayers(element) {
+      var nbLayers = 1;
+      if (element.layers != undefined) {
+        nbLayers = element.layers
+          .map(elementNbLayers)
+          .reduce(function(a, b){ return a + b}, 0);
+      }
+      return nbLayers + (element.hasMask? 1 : 0);
+    }
+    var self = this;
+    function createProgressMethod(progressBar, total) {
+      var progression = 1;
+      return function() {
+        self.photoshopScript +=
+          "progressBar." + progressBar + ".value = " + 100/total*(progression++) + ";\n";
+      }
+    }
+
     var doc_str = alg.mapexport.documentStructure();
+    var stackProgress = createProgressMethod("stack", documentNbStacks(doc_str));
+
     //Browse material
-    for (var materialId = 0; materialId < doc_str.materials.length; materialId++) {
+    for (var materialId in doc_str.materials) {
       var material = doc_str.materials[materialId];
       this.materialName = material.name;
-      //Update the progress bar
-      this.photoshopScript += "progressBar.material.value = " + 100/doc_str.materials.length*(materialId+1) + ";\n";
       //Browse stacks
-      for (var stackId = 0; stackId < material.stacks.length; ++stackId) {
+      for (var stackId in material.stacks) {
+        //Update the progress bar
+        stackProgress();
         var stack = material.stacks[stackId];
+        var totalLayers = elementNbLayers(stack);
+        var progressChannel = createProgressMethod("channel", stack.channels.length);
         this.stackName = stack.name;
         //Browse channels
-        for (var channelId = 0; channelId < stack.channels.length; ++channelId) {
+        for (var channelId in stack.channels) {
+          //Update the progress bar
+          progressChannel();
           this.channel = stack.channels[channelId];
           var channelFormat = alg.mapexport.channelFormat([this.materialName, this.stackName],this.channel)
           var bitDepth = alg.settings.value("bitDepth", -1)
           this.exportConfig.bitDepth = bitDepth == -1 ? channelFormat.bitDepth : bitDepth
-          //Update the progress bar
-          this.photoshopScript += "progressBar.channel.value = " + 100/stack.channels.length*(channelId+1) + ";\n";
           //PNG export of a channel snapshot into the path export
           var filename = this.createFilename(".png");
           var exportConfig = this.exportConfig.clone()
           exportConfig.keepAlpha = false
           alg.mapexport.save([this.materialName, this.stackName, this.channel], filename, exportConfig);
-          
+
           //Create a new document into photoshop
           this.photoshopScript += this.newPSDDocumentStr(filename);
           logUserInfo("Export the channel " + this.channel + " of the material " + this.materialName);
           //Browse layers roots forest
+          var progressLayer = createProgressMethod("layer", totalLayers);
           for (var layerId = 0; layerId < stack.layers.length; ++layerId) {
             var layer = stack.layers[layerId];
-            //Update the progress bar
-            this.photoshopScript += "progressBar.layer.value = " + 100/stack.layers.length*(layerId+1) + ";\n";
             //Browse layer tree from root
-            this.layersDFS(layer, this);
+            this.layersDFS(layer, progressLayer);
           }
-          
+
           //Rasterize all layers
           this.photoshopScript += "app.activeDocument.rasterizeAllLayers(); \n";
           //Update the progress bar
@@ -144,17 +170,18 @@ PhotoshopExporter.prototype = {
    * Leaf has exported as photoshop layer
    * Folder has exported as photoshop groupe
    */
-  layersDFS: function(layer) {
+  layersDFS: function(layer, progressLayer) {
     //The layer is a leaf
     if (layer.layers == undefined) {
       //PNG export of the leaf into the path export
       var filename = this.createFilename(layer.uid + ".png");
       alg.mapexport.save([layer.uid, this.channel], filename, this.exportConfig);
+      progressLayer();
       //Create the layer into photoshop
       this.photoshopScript += this.newLayerStr(filename, layer, this.channel);
       //Add his mask if exist
       if (layer.hasMask == true) {
-        this.addMask(layer, this);
+        this.addMask(layer, progressLayer);
       }
     }
     //The layer is a folder
@@ -163,11 +190,11 @@ PhotoshopExporter.prototype = {
       this.photoshopScript += this.newFolderStr(layer, this.channel);
       //Add his mask if exist
       if (layer.hasMask == true) {
-        this.addMask(layer, this);
+        this.addMask(layer, progressLayer);
       }
       //Browse layer tree from the current layer
       for (var layerId = 0; layerId < layer.layers.length; ++layerId) {
-        this.layersDFS(layer.layers[layerId], this);
+        this.layersDFS(layer.layers[layerId], progressLayer);
       }
       //Pull folder up
       this.photoshopScript += " app.activeDocument.activeLayer = folders.pop();\n";
@@ -177,10 +204,11 @@ PhotoshopExporter.prototype = {
   /*
    * Add the layer/folder mask if exist
    */
-  addMask: function(layer) {
+  addMask: function(layer, progressLayer) {
     //PNG export of the mask into the path export
     var filename = this.createFilename(layer.uid + "_mask.png");
     alg.mapexport.save([layer.uid, "mask"], filename, this.exportConfig);
+    progressLayer();
     //Create the mask into photoshop
     this.photoshopScript += this.newMaskStr(filename);
   },
