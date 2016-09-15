@@ -105,7 +105,7 @@ PhotoshopExporter.prototype = {
           var exportConfig = this.exportConfig.clone()
           exportConfig.keepAlpha = false
           alg.mapexport.save([this.materialName, this.stackName, this.channel], filename, exportConfig);
-          
+
           //Create a new document into photoshop
           this.photoshopScript += this.newPSDDocumentStr(filename);
           logUserInfo("Export the channel " + this.channel + " of the material " + this.materialName);
@@ -117,7 +117,7 @@ PhotoshopExporter.prototype = {
             //Browse layer tree from root
             this.layersDFS(layer, this);
           }
-          
+
           //Rasterize all layers
           this.photoshopScript += "app.activeDocument.rasterizeAllLayers(); \n";
           //Update the progress bar
@@ -189,6 +189,7 @@ PhotoshopExporter.prototype = {
   /**********Photoshop generation script**********/
 
   createFilename: function(concate) {
+    concate = concate || ''
     return (this.exportPath + this.materialName + "_" +this.stackName + "_" + this.channel + concate).replace("__", "_");
   },
 
