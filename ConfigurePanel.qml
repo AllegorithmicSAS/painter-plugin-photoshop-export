@@ -112,7 +112,14 @@ AlgDialog {
             id: launchPhotoshopCheckBox
 
             function reload() {
-              checked = alg.settings.value("launchPhotoshop", false);
+              var launchPhotoshop = alg.settings.value("launchPhotoshop", false);
+              // Weird behavior...
+              if (typeof launchPhotoshop === "string") {
+                checked = launchPhotoshop === "true"
+              }
+              else {
+                checked = launchPhotoshop
+              }
             }
 
             Component.onCompleted: {
@@ -133,7 +140,14 @@ AlgDialog {
             id: paddingCheckBox
 
             function reload() {
-              checked = alg.settings.value("padding", false);
+              var padding = alg.settings.value("padding", false);
+              // Weird behavior...
+              if (typeof padding === "string") {
+                checked = padding === "true"
+              }
+              else {
+                checked = padding
+              }
             }
 
             Component.onCompleted: {
