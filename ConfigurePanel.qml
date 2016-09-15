@@ -14,9 +14,9 @@ AlgDialog {
   visible: false
   title: "configure"
   width: 500
-  height: 250
+  height: 220
   minimumWidth: 400
-  minimumHeight: 200
+  minimumHeight: 220
 
   function reload() {
     content.reload()
@@ -66,7 +66,6 @@ AlgDialog {
           AlgTextEdit {
             readOnly: true
             text: "Path to Photoshop"
-            font.bold: true
           }
 
           RowLayout {
@@ -105,9 +104,8 @@ AlgDialog {
 
           AlgTextEdit {
             readOnly: true
-            text: "Launch photoshop after export:"
+            text: "Launch photoshop after export"
             Layout.fillWidth: true
-            font.bold: true
           }
 
           AlgCheckBox {
@@ -127,9 +125,8 @@ AlgDialog {
           spacing: 6
           AlgTextEdit {
             readOnly: true
-            text: "Enable padding:"
+            text: "Enable padding"
             Layout.fillWidth: true
-            font.bold: true
           }
 
           AlgCheckBox {
@@ -151,9 +148,8 @@ AlgDialog {
 
           AlgTextEdit {
             readOnly: true
-            text: "Export bitdepth:"
+            text: "Export bitdepth"
             Layout.fillWidth: true
-            font.bold: true
           }
 
           AlgComboBox {
