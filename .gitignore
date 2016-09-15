@@ -1,29 +1,8 @@
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+# Remove plugin settings
+settings.ini
 
-# Precompiled Headers
-*.gch
-*.pch
+# Emacs temp files
+*~
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
+# OSX
+.DS_Store
