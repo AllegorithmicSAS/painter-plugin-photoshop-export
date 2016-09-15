@@ -106,7 +106,7 @@ PhotoshopExporter.prototype = {
       return function() {
         if (progressBar === "layer") {
           var stackPath = [self.materialName, self.stackName, self.channel].filter(function(e) {return e}).join("/");
-          self.logUserInfo("Exporting " + stackPath + " layers and masks " + progression + "/" + total + "...");
+          self.logUserInfo("Exporting " + stackPath + " layers and masks: " + progression + "/" + total);
         }
         self.photoshopScript +=
           "progressBar." + progressBar + ".value = " + 100/total*(progression++) + ";\n";
