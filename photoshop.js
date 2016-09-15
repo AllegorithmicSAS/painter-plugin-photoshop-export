@@ -149,7 +149,7 @@ PhotoshopExporter.prototype = {
     //The layer is a leaf
     if (layer.layers == undefined) {
       //PNG export of the leaf into the path export
-      var filename = this.createFilename(layer.uid + ".png");
+      var filename = this.createFilename("_" + layer.uid + ".png");
       alg.mapexport.save([layer.uid, this.channel], filename, this.exportConfig);
       //Create the layer into photoshop
       this.photoshopScript += this.newLayerStr(filename, layer, this.channel);
@@ -180,7 +180,7 @@ PhotoshopExporter.prototype = {
    */
   addMask: function(layer) {
     //PNG export of the mask into the path export
-    var filename = this.createFilename(layer.uid + "_mask.png");
+    var filename = this.createFilename("_" + layer.uid + "_mask.png");
     alg.mapexport.save([layer.uid, "mask"], filename, this.exportConfig);
     //Create the mask into photoshop
     this.photoshopScript += this.newMaskStr(filename);
@@ -189,7 +189,7 @@ PhotoshopExporter.prototype = {
   /**********Photoshop generation script**********/
 
   createFilename: function(concate) {
-    return (this.exportPath + this.materialName + "_" +this.stackName + "_" + this.channel + "_" + concate).replace("__", "_");
+    return (this.exportPath + this.materialName + "_" +this.stackName + "_" + this.channel + concate).replace("__", "_");
   },
 
   /*
