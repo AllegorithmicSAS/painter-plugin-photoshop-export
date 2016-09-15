@@ -105,6 +105,7 @@ Button {
               width: parent.width
               wrapMode: TextEdit.Wrap
               clip: true
+              readOnly: true
             }
         }
 
