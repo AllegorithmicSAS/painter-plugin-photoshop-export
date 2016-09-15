@@ -207,6 +207,9 @@ PhotoshopExporter.prototype = {
       }
       //Pull folder up
       this.photoshopScript += " app.activeDocument.activeLayer = folders.pop();\n";
+      // Need to set folder visibility once all the layers inside have been added otherwise it will always be
+      // overriden to true
+      this.photoshopScript += " app.activeDocument.activeLayer.visible = " + (layer.enabled? "true" : "false") + ";";
     }
   },
 
@@ -278,7 +281,8 @@ PhotoshopExporter.prototype = {
    layerFile.remove(); \n\
    app.activeDocument.activeLayer.opacity = " + blending.opacity + ";\n\
    " + this.convertBlendingMode(blending.mode, 0) + ";\n\
-   app.activeDocument.activeLayer.name = \"" + layer.name + "\"; ";
+   app.activeDocument.activeLayer.name = \"" + layer.name + "\";\n\
+   app.activeDocument.activeLayer.visible = " + (layer.enabled? "true" : "false") + ";";
   },
 
   /*
