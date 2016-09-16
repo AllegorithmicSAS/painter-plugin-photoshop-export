@@ -114,12 +114,7 @@ AlgDialog {
             function reload() {
               var launchPhotoshop = alg.settings.value("launchPhotoshop", false);
               // Weird behavior...
-              if (typeof launchPhotoshop === "string") {
-                checked = launchPhotoshop === "true"
-              }
-              else {
-                checked = launchPhotoshop
-              }
+              checked = typeof launchPhotoshop === "string" ? launchPhotoshop === "true" : launchPhotoshop
             }
 
             Component.onCompleted: {
@@ -142,12 +137,7 @@ AlgDialog {
             function reload() {
               var padding = alg.settings.value("padding", false);
               // Weird behavior...
-              if (typeof padding === "string") {
-                checked = padding === "true"
-              }
-              else {
-                checked = padding
-              }
+              checked = typeof padding === "string" ? padding === "true" : padding
             }
 
             Component.onCompleted: {
