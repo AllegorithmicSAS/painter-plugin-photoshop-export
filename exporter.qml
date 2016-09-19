@@ -57,20 +57,31 @@ Button {
         progressText.text = text
     }
 
-    function launchImport() {
-      try {
-        loading = true;
-        progressWindow.open()
-        Photoshop.importPainterDocument(updateProgressWindow);
-      }
-      catch (e) {
-        alg.log.warn(e.message)
-      }
-      finally {
-        progressWindow.close()
-        loading = false;
-      }
+    function launchExportDialog() {
+      exportDialog.open()
     }
+
+    function launchExport() {
+        try {
+          loading = true;
+          progressWindow.open()
+          Photoshop.importPainterDocument(updateProgressWindow);
+        }
+        catch (e) {
+          alg.log.warn(e.message)
+        }
+        finally {
+          progressWindow.close()
+          loading = false;
+        }
+    }
+  }
+  ExportDialog {
+      id: exportDialog
+
+      onAccepted: {
+        internal.launchExport()
+      }
   }
 
   AlgModalWindow {
@@ -129,7 +140,7 @@ Button {
     selectedNameFilter: "Executable files (*)"
     onAccepted: {
       alg.settings.setValue("photoshopPath", alg.fileIO.urlToLocalFile(fileUrl.toString()));
-      internal.launchImport()
+      internal.launchExportDialog()
     }
   }
 
@@ -138,7 +149,7 @@ Button {
       if (!alg.settings.contains("photoshopPath") && alg.settings.value("launchPhotoshop", false)) {
         fileDialog.open();
       } else {
-        internal.launchImport()
+        internal.launchExportDialog()
       }
     }
   }

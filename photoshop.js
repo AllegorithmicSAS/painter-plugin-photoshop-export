@@ -3,6 +3,17 @@
 // This software may be modified and distributed under the terms
 // of the MIT license.  See the LICENSE file for details.
 
+function isMapExportable(exportVariant, mapPath) {
+    var result = true
+    exportVariant.forEach(function(currentValue) {
+        if (currentValue.path === mapPath) {
+            result = currentValue.checked
+            return
+        }
+    });
+    return result
+}
+
 function ExportConfig() {
   this.padding = "Infinite"
   this.dilation = 0
@@ -115,16 +126,20 @@ PhotoshopExporter.prototype = {
 
     var doc_str = alg.mapexport.documentStructure();
     var stackProgress = createProgressMethod("stack", documentNbStacks(doc_str));
+    var mapsVariant = alg.settings.value("exportMaps", [])
 
     //Browse material
     for (var materialId in doc_str.materials) {
       var material = doc_str.materials[materialId];
+      if (!isMapExportable(mapsVariant, material.name)) continue
       this.materialName = material.name;
       //Browse stacks
       for (var stackId in material.stacks) {
         //Update the progress bar
         stackProgress();
         var stack = material.stacks[stackId];
+        var stackPath = material.name + "." + stack.name
+        if (!isMapExportable(mapsVariant, stackPath)) continue
         var totalLayers = elementNbLayers(stack);
         var progressChannel = createProgressMethod("channel", stack.channels.length);
         this.stackName = stack.name;
@@ -133,6 +148,8 @@ PhotoshopExporter.prototype = {
           //Update the progress bar
           progressChannel();
           this.channel = stack.channels[channelId];
+          var channelPath = stackPath + "." + this.channel
+          if (!isMapExportable(mapsVariant, channelPath)) continue
           var channelFormat = alg.mapexport.channelFormat([this.materialName, this.stackName],this.channel)
           var bitDepth = alg.settings.value("bitDepth", -1)
           this.exportConfig.bitDepth = bitDepth == -1 ? channelFormat.bitDepth : bitDepth
