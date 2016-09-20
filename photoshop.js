@@ -3,15 +3,14 @@
 // This software may be modified and distributed under the terms
 // of the MIT license.  See the LICENSE file for details.
 
-function isMapExportable(exportVariant, mapPath) {
-    var result = true
-    exportVariant.forEach(function(currentValue) {
-        if (currentValue.path === mapPath) {
-            result = currentValue.checked
-            return
-        }
-    });
-    return result
+function exportMaps() {
+  var paths = alg.settings.value("exportMaps", {})
+
+  return {
+    isChecked: function isChecked(path) {
+      return !(path in paths) || !!paths[path];
+    }
+  }
 }
 
 function ExportConfig() {
@@ -126,12 +125,12 @@ PhotoshopExporter.prototype = {
 
     var doc_str = alg.mapexport.documentStructure();
     var stackProgress = createProgressMethod("stack", documentNbStacks(doc_str));
-    var mapsVariant = alg.settings.value("exportMaps", [])
+    var mapsList = Photoshop.exportMaps();
 
     //Browse material
     for (var materialId in doc_str.materials) {
       var material = doc_str.materials[materialId];
-      if (!isMapExportable(mapsVariant, material.name)) continue
+      if (!mapsList.isChecked(material.name)) continue
       this.materialName = material.name;
       //Browse stacks
       for (var stackId in material.stacks) {
@@ -139,7 +138,7 @@ PhotoshopExporter.prototype = {
         stackProgress();
         var stack = material.stacks[stackId];
         var stackPath = material.name + "." + stack.name
-        if (!isMapExportable(mapsVariant, stackPath)) continue
+        if (!mapsList.isChecked(stackPath)) continue
         var totalLayers = elementNbLayers(stack);
         var progressChannel = createProgressMethod("channel", stack.channels.length);
         this.stackName = stack.name;
@@ -149,7 +148,7 @@ PhotoshopExporter.prototype = {
           progressChannel();
           this.channel = stack.channels[channelId];
           var channelPath = stackPath + "." + this.channel
-          if (!isMapExportable(mapsVariant, channelPath)) continue
+          if (!mapsList.isChecked(channelPath)) continue
           var channelFormat = alg.mapexport.channelFormat([this.materialName, this.stackName],this.channel)
           var bitDepth = alg.settings.value("bitDepth", -1)
           this.exportConfig.bitDepth = bitDepth == -1 ? channelFormat.bitDepth : bitDepth

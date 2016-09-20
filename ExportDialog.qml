@@ -42,7 +42,7 @@ AlgDialog {
     function reload() {
         var documentStructure = alg.mapexport.documentStructure()
         documentStructureModel.clear()
-        var list = alg.settings.value("exportMaps", [])
+        var mapsList = Photoshop.exportMaps();
         for (var materialId in documentStructure.materials) {
             var material = documentStructure.materials[materialId]
             var id = internal.nextModelIndex(documentStructureModel, material.name)
@@ -52,7 +52,7 @@ AlgDialog {
                                            'path': material.name,
                                            'type': internal.documentType.Material,
                                            'parentIndex': 0,
-                                           'defaultChecked': Photoshop.isMapExportable(list, material.name)})
+                                           'defaultChecked': mapsList.isChecked(material.name)})
             ++id
             //Browse stacks
             for (var stackId in material.stacks) {
@@ -66,7 +66,7 @@ AlgDialog {
                                                    'path': stackPath,
                                                    'type': internal.documentType.Stack,
                                                    'parentIndex': id - modelMaterialId,
-                                                   'defaultChecked': Photoshop.isMapExportable(list, stackPath)})
+                                                   'defaultChecked': mapsList.isChecked(stackPath)})
                 }
                 ++id
                 //Browse channels
@@ -78,7 +78,7 @@ AlgDialog {
                                                    'path': channelPath,
                                                    'type': internal.documentType.Channel,
                                                    'parentIndex': id - modelStackId,
-                                                   'defaultChecked': Photoshop.isMapExportable(list, channelPath)})
+                                                   'defaultChecked': mapsList.isChecked(channelPath)})
                     ++id
                 }
             }
@@ -86,11 +86,11 @@ AlgDialog {
     }
 
     onAccepted: {
-        var list = []
+        var exportMaps = {}
         for (var i = 0; i < repeater.count; ++i) {
-            list.push({'path': repeater.itemAt(i).documentPath, 'checked': repeater.itemAt(i).checked})
+            exportMaps[repeater.itemAt(i).documentPath] = repeater.itemAt(i).checked;
         }
-        alg.settings.setValue("exportMaps", list)
+        alg.settings.setValue("exportMaps", exportMaps)
     }
 
     ListModel {
