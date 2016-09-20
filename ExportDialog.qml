@@ -26,44 +26,58 @@ AlgDialog {
             'Stack': "stack",
             'Channel': "channel"
         }
+
+        function nextModelIndex(model, materialName) {
+            var result = 0
+            for (result = 0; result < model.count; ++result) {
+                var modelObject = model.get(result)
+                if (modelObject.type === documentType.Material && modelObject.name.localeCompare(materialName) > 0) {
+                    break
+                }
+            }
+            return result
+        }
     }
 
     function reload() {
         var documentStructure = alg.mapexport.documentStructure()
         documentStructureModel.clear()
         var list = alg.settings.value("exportMaps", [])
-        var id = 0
         for (var materialId in documentStructure.materials) {
-            var modelMaterialId = id
-            ++id
             var material = documentStructure.materials[materialId]
-            documentStructureModel.append({'name': material.name,
+            var id = internal.nextModelIndex(documentStructureModel, material.name)
+            var modelMaterialId = id
+            documentStructureModel.insert(id,
+                                          {'name': material.name,
                                            'path': material.name,
                                            'type': internal.documentType.Material,
-                                           'parentIndex': -1,
+                                           'parentIndex': 0,
                                            'defaultChecked': Photoshop.isMapExportable(list, material.name)})
+            ++id
             //Browse stacks
             for (var stackId in material.stacks) {
                 var stack = material.stacks[stackId]
                 var stackPath = material.name + "." + stack.name
                 var modelStackId = stack.name !== "" ? id : --id
-                ++id
                 // Do not display the main stack
                 if (stack.name !== "") {
-                    documentStructureModel.append({'name': stack.name,
-                                                      'path': stackPath,
-                                                      'type': internal.documentType.Stack,
-                                                      'parentIndex': modelMaterialId,
-                                                      'defaultChecked': Photoshop.isMapExportable(list, stackPath)})
+                    documentStructureModel.insert(id,
+                                                  {'name': stack.name,
+                                                   'path': stackPath,
+                                                   'type': internal.documentType.Stack,
+                                                   'parentIndex': id - modelMaterialId,
+                                                   'defaultChecked': Photoshop.isMapExportable(list, stackPath)})
                 }
+                ++id
                 //Browse channels
                 for (var channelId in stack.channels) {
                     var channel = stack.channels[channelId]
                     var channelPath = stackPath + "." + channel
-                    documentStructureModel.append({'name': channel,
+                    documentStructureModel.insert(id,
+                                                  {'name': channel,
                                                    'path': channelPath,
                                                    'type': internal.documentType.Channel,
-                                                   'parentIndex': modelStackId,
+                                                   'parentIndex': id - modelStackId,
                                                    'defaultChecked': Photoshop.isMapExportable(list, channelPath)})
                     ++id
                 }
@@ -111,14 +125,12 @@ AlgDialog {
                 }
             }
 
-            ScrollView {
+            AlgScrollView {
                 id: scrollView
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
-                // remove 6 in order to have a right margin when
-                // displaying the content
-                property int viewportWidth: viewport.width - 6
+                property int viewportWidth: viewport.width
 
                 ColumnLayout {
                     spacing: 6
@@ -134,16 +146,17 @@ AlgDialog {
                             property int paddingSize: type === internal.documentType.Stack ?
                                                           10 : type === internal.documentType.Channel ?
                                                               20 : 0
-                            property var prevItem: repeater.itemAt(parentIndex)
+                            property var prevItem: null
                             property alias checked: modelCheckBox.checked
                             property string documentPath: path
                             signal clicked()
                             Layout.leftMargin: paddingSize
                             Layout.minimumWidth: scrollView.viewportWidth - paddingSize
                             Layout.maximumWidth: scrollView.viewportWidth - paddingSize
-                            enabled: !prevItem ? true : prevItem.enabled ?
-                                         prevItem.checked : false
-                            opacity: enabled ? 1. : 0.5
+
+                            Component.onCompleted: {
+                                if (parentIndex > 0) prevItem = repeater.itemAt(index - parentIndex)
+                            }
 
                             AlgCheckBox {
                                 id: modelCheckBox
@@ -151,6 +164,12 @@ AlgDialog {
 
                                 onClicked: {
                                     rowItem.clicked()
+                                }
+
+                                onCheckedChanged: {
+                                    if (prevItem && checked) {
+                                        prevItem.checked = true;
+                                    }
                                 }
 
                                 Connections {
@@ -169,10 +188,13 @@ AlgDialog {
                                     target: prevItem
                                     onClicked: {
                                         checked = prevItem.checked
+                                        // transmit event to children
+                                        rowItem.clicked()
                                     }
                                 }
                             }
                             AlgTextEdit {
+                                readOnly: true
                                 borderActivated: true
                                 borderOpacity: type === internal.documentType.Stack ?
                                                  0.65 : type === internal.documentType.Channel ?
