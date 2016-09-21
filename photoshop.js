@@ -153,7 +153,9 @@ PhotoshopExporter.prototype = {
           }
 
           //Rasterize all layers
-          this.photoshopScript += "app.activeDocument.rasterizeAllLayers(); \n";
+
+          // this.photoshopScript += "try{app.activeDocument.rasterizeAllLayers();}catch(err){} \n";
+
           //Update the progress bar
           this.photoshopScript += "progressBar.layer.value = 0; \n";
           //Gamma correction for sRGB channel
@@ -170,12 +172,16 @@ PhotoshopExporter.prototype = {
           this.photoshopScript += "app.activeDocument.activeLayer = snapshot; \n";
           //Hide the snapshot
           this.photoshopScript += "snapshot.visible = false; \n";
+          
+          //Delete empty folders
+          this.photoshopScript += "deleteEmptyFolders(); \n";
+
           //Save the psd
           this.photoshopScript += " app.activeDocument.saveAs(File(\"" + this.createFilename() + "\")); \n";
         }
         //Update the progress bar
         this.photoshopScript += "progressBar.channel.value = 0; \n";
-      }
+      }      
     }
   },
 
@@ -196,6 +202,9 @@ PhotoshopExporter.prototype = {
       //Add his mask if exist
       if (layer.hasMask == true) {
         this.addMask(layer, progressLayer);
+        this.photoshopScript += '\n\t};\n';
+      }else{
+        this.photoshopScript += '\n\t};\n';
       }
     }
     //The layer is a folder
@@ -259,7 +268,7 @@ PhotoshopExporter.prototype = {
    var maskFile = File(\"" + filename + "\"); \n\
    open_png(maskFile); \n\
    maskFile.remove(); \n\
-   layerToMask();";
+   layerToMask();\n";
   },
 
   /*
@@ -284,10 +293,24 @@ PhotoshopExporter.prototype = {
    var layerFile = File(\"" + filename + "\"); \n\
    open_png(layerFile); \n\
    layerFile.remove(); \n\
-   app.activeDocument.activeLayer.opacity = " + blending.opacity + ";\n\
-   " + this.convertBlendingMode(blending.mode, 0) + ";\n\
-   app.activeDocument.activeLayer.name = \"" + layer.name + "\";\n\
-   app.activeDocument.activeLayer.visible = " + (layer.enabled? "true" : "false") + ";";
+   var trsp = checkTransparency();\n\
+   if(trsp.empty == true){//if the layer is empty just delete it \n\
+   \tapp.activeDocument.activeLayer.remove();\n\
+   \tvar emptyMaskFile = new File(layerFile.toString().replace('.png', '_mask.png'));\n\
+   \tif(emptyMaskFile.exists){emptyMaskFile.remove()};\n\
+   }else{\n\
+   \tvar isFlat = isLayerFlatColor(trsp.partialTransparent);\n\
+   \tif(isFlat.flat == true){\n\
+   \t\tapp.activeDocument.activeLayer.remove();\n\
+   \t\tmakeSolidColor(isFlat.color.red, isFlat.color.green, isFlat.color.blue);\n\
+   \t}else{\n\
+   \t\tapp.activeDocument.activeLayer.rasterize(RasterizeType.LINKEDLAYERS);\n\
+   \t}\n\
+   \tapp.activeDocument.activeLayer.opacity = " + blending.opacity + ";\n\
+   \t" + this.convertBlendingMode(blending.mode, 0) + ";\n\
+   \tapp.activeDocument.activeLayer.name = \"" + layer.name + "\";\n\
+   \tapp.activeDocument.activeLayer.visible = " + (layer.enabled? "true" : "false") + ";\n";
+
   },
 
   /*
