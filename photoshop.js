@@ -38,7 +38,6 @@ function PhotoshopExporter(callback) {
 
   //Padding's struct
   this.exportConfig = new ExportConfig()
-  // Weird behavior
   this.exportConfig.usePadding(alg.settings.value("padding", false))
 
   //Get the project name
