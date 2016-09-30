@@ -112,14 +112,7 @@ AlgDialog {
             id: launchPhotoshopCheckBox
 
             function reload() {
-              var launchPhotoshop = alg.settings.value("launchPhotoshop", false);
-              // Weird behavior...
-              if (typeof launchPhotoshop === "string") {
-                checked = launchPhotoshop === "true"
-              }
-              else {
-                checked = launchPhotoshop
-              }
+              checked = alg.settings.value("launchPhotoshop", false);
             }
 
             Component.onCompleted: {
@@ -140,14 +133,7 @@ AlgDialog {
             id: paddingCheckBox
 
             function reload() {
-              var padding = alg.settings.value("padding", false);
-              // Weird behavior...
-              if (typeof padding === "string") {
-                checked = padding === "true"
-              }
-              else {
-                checked = padding
-              }
+              checked = alg.settings.value("padding", false);
             }
 
             Component.onCompleted: {
@@ -173,7 +159,7 @@ AlgDialog {
 
             model: ListModel {
               id: bitDepthModel
-              ListElement { key: "Texture set value"; value: -1 }
+              ListElement { key: "TextureSet value"; value: -1 }
               ListElement { key: "8 bits"; value: 8 }
               ListElement { key: "16 bits"; value: 16 }
             }
