@@ -39,9 +39,7 @@ function PhotoshopExporter(callback) {
   //Padding's struct
   this.exportConfig = new ExportConfig()
   // Weird behavior
-  var padding_ = alg.settings.value("padding", false)
-  padding_ = typeof padding_ === "string" ? padding_ === "true" : padding_
-  this.exportConfig.usePadding(padding_)
+  this.exportConfig.usePadding(alg.settings.value("padding", false))
 
   //Get the project name
   var projectName = alg.project.name()
@@ -72,10 +70,7 @@ function PhotoshopExporter(callback) {
   }
 
   this.logUserInfo("Export done");
-  // Weird behavior
-  var launchPhotoshop = alg.settings.value("launchPhotoshop", false)
-  launchPhotoshop = typeof launchPhotoshop === "string" ? launchPhotoshop === "true" : launchPhotoshop
-  if (launchPhotoshop) {
+  if (alg.settings.value("launchPhotoshop", false)) {
     this.logUserInfo("Starting Photoshop...");
     if (Qt.platform.os == "windows") {
       alg.subprocess.startDetached(["\"" + alg.settings.value("photoshopPath", "") + "\"", "\"" + this.exportPath.split('/').join('\\') + "photoshopScript.jsx\""]);

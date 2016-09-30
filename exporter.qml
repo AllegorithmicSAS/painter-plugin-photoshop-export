@@ -135,10 +135,7 @@ Button {
 
   onClicked: {
     if (!loading) {
-      var launchPhotoshop = alg.settings.value("launchPhotoshop", false);
-      // Weird behavior...
-      launchPhotoshop = typeof launchPhotoshop === "string" ? launchPhotoshop === "true" : launchPhotoshop
-      if (!alg.settings.contains("photoshopPath") && launchPhotoshop) {
+      if (!alg.settings.contains("photoshopPath") && alg.settings.value("launchPhotoshop", false)) {
         fileDialog.open();
       } else {
         internal.launchImport()
