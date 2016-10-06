@@ -47,13 +47,11 @@ AlgDialog {
       bitDepthComboBox.reload()
     }
 
-    ScrollView {
+    AlgScrollView {
       id: scrollView
       anchors.fill: parent
       horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
-      // remove 6 in order to have a right margin when
-      // displaying the content
-      property int viewportWidth: viewport.width - 6
+      property int viewportWidth: viewport.width
 
       ColumnLayout {
         spacing: 18

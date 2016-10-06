@@ -3,6 +3,16 @@
 // This software may be modified and distributed under the terms
 // of the MIT license.  See the LICENSE file for details.
 
+function exportMaps() {
+  var paths = alg.settings.value("exportMaps", {})
+
+  return {
+    isChecked: function isChecked(path) {
+      return !(path in paths) || !!paths[path];
+    }
+  }
+}
+
 function ExportConfig() {
   this.padding = "Infinite"
   this.dilation = 0
@@ -86,10 +96,24 @@ PhotoshopExporter.prototype = {
   * Browsing of all layers into the document structure
   */
   run: function() {
+    var mapsList = Photoshop.exportMaps();
+
     function documentNbStacks(document) {
       return document.materials
-        .map(function(m) {return m.stacks.length})
-        .reduce(function(a, b){ return a + b}, 0);
+        .map(function(m) {
+          return !mapsList.isChecked(m.name)?
+            0 :
+            m.stacks.filter(function(s) {
+              return mapsList.isChecked(m.name + "." + s.name);
+            }).length; // Count checked stacks on a texture set
+        })
+        .reduce(function(a, b){ return a + b}, 0); // Count sum of texture sets checked stacks
+    }
+    function stackNbChannel(materialName, stack) {
+      return stack.channels
+        .filter(function(c) {
+          return mapsList.isChecked(materialName + "." + stack.name + "." + c);
+        }).length;
     }
     function elementNbLayers(element) {
       var nbLayers = 1;
@@ -119,20 +143,28 @@ PhotoshopExporter.prototype = {
     //Browse material
     for (var materialId in doc_str.materials) {
       var material = doc_str.materials[materialId];
+      if (!mapsList.isChecked(material.name)) continue
       this.materialName = material.name;
       //Browse stacks
       for (var stackId in material.stacks) {
-        //Update the progress bar
-        stackProgress();
+        // Ensure checked state then update the progress bar
         var stack = material.stacks[stackId];
+        var stackPath = material.name + "." + stack.name
+        if (!mapsList.isChecked(stackPath)) continue
+        stackProgress();
+
         var totalLayers = elementNbLayers(stack);
-        var progressChannel = createProgressMethod("channel", stack.channels.length);
+        var progressChannel = createProgressMethod("channel", stackNbChannel(this.materialName, stack));
         this.stackName = stack.name;
+
         //Browse channels
         for (var channelId in stack.channels) {
-          //Update the progress bar
-          progressChannel();
+          // Ensure checked state then update the progress bar
           this.channel = stack.channels[channelId];
+          var channelPath = stackPath + "." + this.channel
+          if (!mapsList.isChecked(channelPath)) continue
+          progressChannel();
+
           var channelFormat = alg.mapexport.channelFormat([this.materialName, this.stackName],this.channel)
           var bitDepth = alg.settings.value("bitDepth", -1)
           this.exportConfig.bitDepth = bitDepth == -1 ? channelFormat.bitDepth : bitDepth

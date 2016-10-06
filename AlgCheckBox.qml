@@ -15,7 +15,7 @@ CheckBox {
       radius: 3
       border.color: "#000000"
       border.width: 1
-      color: "#3C3C3C"
+      color: control.hovered ? "#606060" : "#3C3C3C"
 
       Rectangle {
         color: control.checked ? "#00BCF2" : "#323232"
