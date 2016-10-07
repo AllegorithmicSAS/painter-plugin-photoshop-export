@@ -10,6 +10,7 @@ AlgModalWindow {
   flags: Qt.Dialog
   signal accepted()
   property alias contentItem: content
+  property string defaultButtonText: "Save"
 
   function accept() {
     accepted()
@@ -50,7 +51,7 @@ AlgModalWindow {
       onClicked: close()
     }
     AlgButton {
-      text: "Save"
+      text: defaultButtonText
       isDefaultButton: true
       onClicked: {
         accept()
