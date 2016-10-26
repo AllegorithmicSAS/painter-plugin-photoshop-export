@@ -9,6 +9,7 @@ import QtQuick.Layouts 1.2
 import QtQuick.Dialogs 1.0
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
+import AlgWidgets 1.0
 
 import "photoshop.js" as Photoshop
 
@@ -54,7 +55,7 @@ Button {
   QtObject {
     id: internal
     function updateProgressWindow(text) {
-        progressText.text = text
+      progressText.text = text
     }
 
     function launchExportDialog() {
@@ -62,30 +63,31 @@ Button {
     }
 
     function launchExport() {
-        try {
-          loading = true;
-          progressWindow.open()
-          Photoshop.importPainterDocument(updateProgressWindow);
-        }
-        catch (e) {
-          alg.log.warn(e.message)
-        }
-        finally {
-          progressWindow.close()
-          loading = false;
-        }
+      try {
+        loading = true;
+        progressWindow.open()
+        Photoshop.importPainterDocument(updateProgressWindow);
+      }
+      catch (e) {
+        alg.log.warn(e.message)
+      }
+      finally {
+        progressWindow.close()
+        loading = false;
+      }
     }
   }
   ExportDialog {
-      id: exportDialog
+    id: exportDialog
 
-      onAccepted: {
-        internal.launchExport()
-      }
+    onAccepted: {
+      internal.launchExport()
+    }
   }
 
-  AlgModalWindow {
+  AlgWindow {
     id: progressWindow
+    modality: Qt.ApplicationModal
     minimumWidth: 400
     minimumHeight: 125
     maximumWidth: 400
@@ -107,27 +109,26 @@ Button {
         anchors.fill: parent
 
         Rectangle {
-            color: "transparent"
-            Layout.fillWidth: true
-            AlgTextEdit {
-              id: progressText
-              anchors.centerIn: parent
-              width: parent.width
-              wrapMode: TextEdit.Wrap
-              clip: true
-              readOnly: true
-            }
+          color: "transparent"
+          Layout.fillWidth: true
+          AlgLabel {
+            id: progressText
+            anchors.centerIn: parent
+            width: parent.width
+            wrapMode: TextEdit.Wrap
+            clip: true
+          }
         }
 
         Rectangle {
-            color: "transparent"
-            Layout.fillWidth: true
-            AlgProgressBar {
-              id: progressBar
-              anchors.centerIn: parent
-              width: parent.width
-              indeterminate: true
-            }
+          color: "transparent"
+          Layout.fillWidth: true
+          AlgProgressBar {
+            id: progressBar
+            anchors.centerIn: parent
+            width: parent.width
+            indeterminate: true
+          }
         }
       }
     }

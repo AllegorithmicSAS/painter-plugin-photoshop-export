@@ -8,6 +8,7 @@ import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.3
+import AlgWidgets 1.0
 
 AlgDialog {
   id: configureDialog
@@ -24,12 +25,12 @@ AlgDialog {
 
   onAccepted: {
     if (path.text != "...") {
-			alg.settings.setValue("photoshopPath", path.text);
-		}
-		alg.settings.setValue("launchPhotoshop", launchPhotoshopCheckBox.checked);
-		alg.settings.setValue("padding", paddingCheckBox.checked);
-        var index = bitDepthComboBox.currentIndex
-        alg.settings.setValue("bitDepth", bitDepthModel.get(index).value);
+      alg.settings.setValue("photoshopPath", path.text);
+    }
+    alg.settings.setValue("launchPhotoshop", launchPhotoshopCheckBox.checked);
+    alg.settings.setValue("padding", paddingCheckBox.checked);
+    var index = bitDepthComboBox.currentIndex
+    alg.settings.setValue("bitDepth", bitDepthModel.get(index).value);
   }
 
   Rectangle {
@@ -51,27 +52,25 @@ AlgDialog {
       id: scrollView
       anchors.fill: parent
       horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
-      property int viewportWidth: viewport.width
 
       ColumnLayout {
         spacing: 18
-        Layout.maximumWidth: scrollView.viewportWidth
+        width: scrollView.viewport.width
 
         ColumnLayout {
           spacing: 6
-          Layout.maximumWidth: scrollView.viewportWidth
+          Layout.fillWidth: true
 
-          AlgTextEdit {
-            readOnly: true
+          AlgLabel {
             text: "Path to Photoshop"
           }
 
           RowLayout {
             spacing: 6
+            Layout.fillWidth: true
 
             AlgTextEdit {
               id: path
-              borderActivated: true
               wrapMode: TextEdit.Wrap
               readOnly: true
               Layout.fillWidth: true
@@ -98,10 +97,9 @@ AlgDialog {
 
         RowLayout {
           spacing: 6
-          Layout.maximumWidth: scrollView.viewportWidth
+          Layout.fillWidth: true
 
-          AlgTextEdit {
-            readOnly: true
+          AlgLabel {
             text: "Launch photoshop after export"
             Layout.fillWidth: true
           }
@@ -121,8 +119,8 @@ AlgDialog {
 
         RowLayout {
           spacing: 6
-          AlgTextEdit {
-            readOnly: true
+          Layout.fillWidth: true
+          AlgLabel {
             text: "Enable padding"
             Layout.fillWidth: true
           }
@@ -142,10 +140,9 @@ AlgDialog {
 
         RowLayout {
           spacing: 6
-          Layout.maximumWidth: scrollView.viewportWidth
+          Layout.fillWidth: true
 
-          AlgTextEdit {
-            readOnly: true
+          AlgLabel {
             text: "Export bitdepth"
             Layout.fillWidth: true
           }
