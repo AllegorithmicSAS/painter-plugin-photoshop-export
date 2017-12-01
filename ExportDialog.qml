@@ -6,8 +6,9 @@
 import QtQuick 2.3
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
-import QtQuick.Controls 1.4
+import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.3
+import AlgWidgets 1.0
 
 import "photoshop.js" as Photoshop
 
@@ -129,8 +130,6 @@ AlgDialog {
                 id: scrollView
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
-                property int viewportWidth: viewport.width
 
                 ColumnLayout {
                     spacing: 6
@@ -161,6 +160,7 @@ AlgDialog {
                             AlgCheckBox {
                                 id: modelCheckBox
                                 checked: defaultChecked
+                                Layout.preferredWidth: height
 
                                 onClicked: {
                                     rowItem.clicked()
@@ -196,9 +196,7 @@ AlgDialog {
                             AlgTextEdit {
                                 readOnly: true
                                 borderActivated: true
-                                borderOpacity: type === internal.documentType.Stack ?
-                                                 0.65 : type === internal.documentType.Channel ?
-                                                     0.3 : 1.
+                                borderOpacity: 0.3
                                 Layout.fillWidth: true
                                 text: name
                             }
