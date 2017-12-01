@@ -90,8 +90,6 @@ AlgDialog {
         var exportMaps = {}
         for (var i = 0; i < repeater.count; ++i) {
             exportMaps[repeater.itemAt(i).documentPath] = repeater.itemAt(i).checked;
-          alg.log.warn(repeater.itemAt(i).documentPath);
-          alg.log.warn(repeater.itemAt(i).checked);
         }
         alg.settings.setValue("exportMaps", exportMaps)
     }
