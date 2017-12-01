@@ -4,20 +4,21 @@
 // of the MIT license.  See the LICENSE file for details.
 
 import QtQuick 2.3
-import QtQuick.Window 2.2
 import QtQuick.Layouts 1.2
 import QtQuick.Dialogs 1.0
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
+import AlgWidgets 1.0
+import AlgWidgets.Style 1.0
 
 import "photoshop.js" as Photoshop
 
 Button {
-  id: rect
+  id: control
   antialiasing: true
   width: 30; height: 30
-  tooltip: "Export to Photoshop"
   property bool loading: false
+  tooltip: "Export to Photoshop"
 
   style: ButtonStyle {
     background: Rectangle {
@@ -80,11 +81,12 @@ Button {
       id: exportDialog
 
       onAccepted: {
+        visible = false
         internal.launchExport()
       }
   }
 
-  AlgModalWindow {
+  AlgWindow {
     id: progressWindow
     minimumWidth: 400
     minimumHeight: 125
