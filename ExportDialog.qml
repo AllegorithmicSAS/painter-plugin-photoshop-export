@@ -148,7 +148,7 @@ AlgDialog {
                                                               20 : 0
                             property var prevItem: null
                             property alias checked: modelCheckBox.checked
-                            property string documentPath: path
+                            property string documentPath: model.path
                             signal clicked()
                             Layout.leftMargin: paddingSize
                             Layout.minimumWidth: scrollView.viewportWidth - paddingSize
