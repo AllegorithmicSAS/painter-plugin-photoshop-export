@@ -16,39 +16,50 @@ import "photoshop.js" as Photoshop
 Button {
   id: control
   antialiasing: true
-  width: 30; height: 30
+  width: 32
+  height: 32
   property bool loading: false
   tooltip: "Export to Photoshop"
 
   style: ButtonStyle {
     background: Rectangle {
+      anchors.fill: control
       width: control.width; height: control.height
-      color: "transparent"
+      color: control.hovered ?
+        "#262626" :
+        "transparent"
+    }
+  }
 
-      Image {
-        source: control.hovered && !control.loading ? "icons/PSiconHover.png" : "icons/PSicon.png"
-        fillMode: Image.PreserveAspectFit
-        width: control.width; height: control.height
-        mipmap: true
-        opacity: control.loading ? 0.5 : 1
-      }
+  Image {
+    anchors.fill: parent
+    anchors.margins: 8
+    source: control.hovered && !control.loading ? "icons/Photoshop_hover.svg" : "icons/Photoshop_idle.svg"
+    fillMode: Image.PreserveAspectFit
+    sourceSize.width: control.width
+    sourceSize.height: control.height
+    mipmap: true
+    opacity: control.loading ? 0.5 : 1
+  }
 
-      Image {
-        id: loadingIcon
-        visible: control.loading
-        source: "icons/PSiconLoading.png"
-        fillMode: Image.PreserveAspectFit
-        mipmap: true
-        width: control.width; height: control.height
+  Image {
+    id: loadingIcon
+    anchors.fill: parent
+    anchors.margins: 8
+    visible: control.loading
+    source: "icons/PSiconLoading.png"
+    fillMode: Image.PreserveAspectFit
+    sourceSize.width: control.width
+    sourceSize.height: control.height
+    mipmap: true
+    width: control.width; height: control.height
 
-        RotationAnimation on rotation {
-          running: control.loading
-          from: 0
-          to: 360
-          duration: 500
-          loops: Animation.Infinite
-        }
-      }
+    RotationAnimation on rotation {
+      running: control.loading
+      from: 0
+      to: 360
+      duration: 500
+      loops: Animation.Infinite
     }
   }
 

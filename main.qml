@@ -18,7 +18,7 @@ PainterPlugin {
 		 	alg.settings.setValue("padding", false);
 		}
 		// create the button
-		alg.ui.addToolBarWidget("exporter.qml");
+		alg.ui.addWidgetToPluginToolBar("exporter.qml");
   }
 
   onConfigure: {
