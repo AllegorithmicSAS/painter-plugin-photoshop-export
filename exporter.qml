@@ -23,7 +23,8 @@ Button {
 
   style: ButtonStyle {
     background: Rectangle {
-      anchors.fill: control
+      implicitWidth: control.width
+      implicitHeight: control.height
       width: control.width; height: control.height
       color: control.hovered ?
         "#262626" :
