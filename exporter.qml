@@ -8,40 +8,16 @@ import QtQuick.Layouts 1.2
 import QtQuick.Dialogs 1.0
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
-import AlgWidgets 1.0
-import AlgWidgets.Style 1.0
+import AlgWidgets 2.0
+import AlgWidgets.Style 2.0
 
 import "photoshop.js" as Photoshop
 
-Button {
+AlgToolBarButton {
   id: control
-  antialiasing: true
-  width: 32
-  height: 32
   property bool loading: false
   tooltip: "Export to Photoshop"
-
-  style: ButtonStyle {
-    background: Rectangle {
-      implicitWidth: control.width
-      implicitHeight: control.height
-      width: control.width; height: control.height
-      color: control.hovered ?
-        "#262626" :
-        "transparent"
-    }
-  }
-
-  Image {
-    anchors.fill: parent
-    anchors.margins: 8
-    source: control.hovered && !control.loading ? "icons/Photoshop_hover.svg" : "icons/Photoshop_idle.svg"
-    fillMode: Image.PreserveAspectFit
-    sourceSize.width: control.width
-    sourceSize.height: control.height
-    mipmap: true
-    opacity: control.loading ? 0.5 : 1
-  }
+  iconName: control.hovered && !control.loading ? "icons/Photoshop_hover.svg" : "icons/Photoshop_idle.svg"
 
   Image {
     id: loadingIcon
