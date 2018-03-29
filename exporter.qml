@@ -8,47 +8,35 @@ import QtQuick.Layouts 1.2
 import QtQuick.Dialogs 1.0
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
-import AlgWidgets 1.0
-import AlgWidgets.Style 1.0
+import AlgWidgets 2.0
+import AlgWidgets.Style 2.0
 
 import "photoshop.js" as Photoshop
 
-Button {
+AlgToolBarButton {
   id: control
-  antialiasing: true
-  width: 30; height: 30
   property bool loading: false
   tooltip: "Export to Photoshop"
+  iconName: control.hovered && !control.loading ? "icons/Photoshop_hover.svg" : "icons/Photoshop_idle.svg"
 
-  style: ButtonStyle {
-    background: Rectangle {
-      width: control.width; height: control.height
-      color: "transparent"
+  Image {
+    id: loadingIcon
+    anchors.fill: parent
+    anchors.margins: 8
+    visible: control.loading
+    source: "icons/PSiconLoading.png"
+    fillMode: Image.PreserveAspectFit
+    sourceSize.width: control.width
+    sourceSize.height: control.height
+    mipmap: true
+    width: control.width; height: control.height
 
-      Image {
-        source: control.hovered && !control.loading ? "icons/PSiconHover.png" : "icons/PSicon.png"
-        fillMode: Image.PreserveAspectFit
-        width: control.width; height: control.height
-        mipmap: true
-        opacity: control.loading ? 0.5 : 1
-      }
-
-      Image {
-        id: loadingIcon
-        visible: control.loading
-        source: "icons/PSiconLoading.png"
-        fillMode: Image.PreserveAspectFit
-        mipmap: true
-        width: control.width; height: control.height
-
-        RotationAnimation on rotation {
-          running: control.loading
-          from: 0
-          to: 360
-          duration: 500
-          loops: Animation.Infinite
-        }
-      }
+    RotationAnimation on rotation {
+      running: control.loading
+      from: 0
+      to: 360
+      duration: 500
+      loops: Animation.Infinite
     }
   }
 
