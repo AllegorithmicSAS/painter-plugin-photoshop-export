@@ -171,7 +171,6 @@ PhotoshopExporter.prototype = {
           //PNG export of a channel snapshot into the path export
           var filename = this.createFilename(".png");
           var exportConfig = this.exportConfig.clone()
-          exportConfig.keepAlpha = false
           alg.mapexport.save([this.materialName, this.stackName, this.channel], filename, exportConfig);
 
           //Create a new document into photoshop
