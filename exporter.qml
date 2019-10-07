@@ -69,7 +69,7 @@ AlgToolBarButton {
       id: exportDialog
 
       onAccepted: {
-        visible = false
+        close()
         internal.launchExport()
       }
   }
