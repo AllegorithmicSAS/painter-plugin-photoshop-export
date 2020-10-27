@@ -18,7 +18,7 @@ Button {
   antialiasing: true
   width: 30; height: 30
   property bool loading: false
-  tooltip: "Export to Photoshop"
+  tooltip: qsTr("Export to Photoshop")
 
   style: ButtonStyle {
     background: Rectangle {
@@ -92,10 +92,10 @@ Button {
     minimumHeight: 125
     maximumWidth: 400
     maximumHeight: 125
-    title: "Export to Photoshop"
+    title: qsTr("Export to Photoshop")
     flags: Qt.Dialog | Qt.CustomizeWindowHint | Qt.WindowTitleHint | Qt.WindowSystemMenuHint
     function reload() {
-      progressText.text = "Export in progress..."
+      progressText.text = qsTr("Export in progress...")
     }
 
     Rectangle {
@@ -137,7 +137,7 @@ Button {
 
   FileDialog {
     id: fileDialog
-    title: "Please locate Photoshop..."
+    title: qsTr("Please locate Photoshop...")
     nameFilters: [ "Photoshop files (*.exe *.app)", "All files (*)" ]
     selectedNameFilter: "Executable files (*)"
     onAccepted: {
