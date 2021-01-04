@@ -16,7 +16,8 @@ import "photoshop.js" as Photoshop
 AlgToolBarButton {
   id: control
   property bool loading: false
-  tooltip: "Export to Photoshop"
+
+  tooltip: qsTr("Export to Photoshop")
   iconName: control.hovered && !control.loading ? "icons/Photoshop_hover.svg" : "icons/Photoshop_idle.svg"
 
   Image {
@@ -80,10 +81,10 @@ AlgToolBarButton {
     minimumHeight: 125
     maximumWidth: 400
     maximumHeight: 125
-    title: "Export to Photoshop"
+    title: qsTr("Export to Photoshop")
     flags: Qt.Dialog | Qt.CustomizeWindowHint | Qt.WindowTitleHint | Qt.WindowSystemMenuHint
     function reload() {
-      progressText.text = "Export in progress..."
+      progressText.text = qsTr("Export in progress...")
     }
 
     Rectangle {
@@ -125,7 +126,7 @@ AlgToolBarButton {
 
   FileDialog {
     id: fileDialog
-    title: "Please locate Photoshop..."
+    title: qsTr("Please locate Photoshop...")
     nameFilters: [ "Photoshop files (*.exe *.app)", "All files (*)" ]
     selectedNameFilter: "Executable files (*)"
     onAccepted: {

@@ -18,7 +18,7 @@ AlgDialog {
     minimumWidth: 400
     minimumHeight: 300
     defaultButtonText: "Ok"
-    title: "Select Materials/Channels to export"
+    title: qsTr("Select Materials/Channels to export")
 
     QtObject {
         id: internal
@@ -116,11 +116,11 @@ AlgDialog {
                 layoutDirection: Qt.RightToLeft
                 AlgButton {
                     id: noneButton
-                    text: "None"
+                    text: qsTr("None")
                 }
                 AlgButton {
                     id: allButton
-                    text: "All"
+                    text: qsTr("All")
                 }
             }
 

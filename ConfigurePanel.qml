@@ -62,7 +62,7 @@ AlgDialog {
           Layout.fillWidth: true
 
           AlgLabel {
-            text: "Path to Photoshop"
+            text: qsTr("Path to Photoshop")
             Layout.fillWidth: true
           }
 
@@ -88,7 +88,7 @@ AlgDialog {
 
             AlgButton {
               id: searchPathButton
-              text: "Set path"
+              text: qsTr("Set path")
               onClicked: {
                 // open the search path dialog
                 searchPathDialog.setVisible(true)
@@ -102,7 +102,7 @@ AlgDialog {
           Layout.fillWidth: true
 
           AlgLabel {
-            text: "Launch photoshop after export"
+            text: qsTr("Launch photoshop after export")
             Layout.fillWidth: true
           }
 
@@ -122,7 +122,7 @@ AlgDialog {
         RowLayout {
           spacing: 6
           AlgLabel {
-            text: "Enable padding"
+            text: qsTr("Enable padding")
             Layout.fillWidth: true
           }
 
@@ -144,7 +144,7 @@ AlgDialog {
           Layout.fillWidth: true
 
           AlgLabel {
-            text: "Export bitdepth"
+            text: qsTr("Export bitdepth")
             Layout.fillWidth: true
           }
 
@@ -180,7 +180,7 @@ AlgDialog {
 
   FileDialog {
     id: searchPathDialog
-    title: "Choose a Photoshop executable file..."
+    title: qsTr("Choose a Photoshop executable file...")
     nameFilters: [ "Photoshop files (*.exe *.app)", "All files (*)" ]
     selectedNameFilter: "Executable files (*)"
     onAccepted: {
