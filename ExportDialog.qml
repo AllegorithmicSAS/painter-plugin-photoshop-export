@@ -112,8 +112,7 @@ AlgDialog {
 
             Flow {
                 id: controlButtons
-                anchors.top: parent.top
-                anchors.left: parent.left; anchors.right: parent.right
+                Layout.alignment: Qt.AlignRight
                 spacing: 6
                 layoutDirection: Qt.RightToLeft
                 AlgButton {
