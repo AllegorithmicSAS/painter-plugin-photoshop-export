@@ -5,6 +5,14 @@
 
 import QtQuick 2.2
 import Painter 1.0
+import QtQuick.Layouts 1.2
+import QtQuick.Dialogs 1.0
+import QtQuick.Controls 1.4
+import QtQuick.Controls.Styles 1.4
+import AlgWidgets 2.0
+import AlgWidgets.Style 2.0
+
+import "photoshop.js" as Photoshop
 
 PainterPlugin {
 	Component.onCompleted: {
@@ -17,8 +25,8 @@ PainterPlugin {
 		 	}
 		 	alg.settings.setValue("padding", false);
 		}
-		// create the button
-		alg.ui.addWidgetToPluginToolBar("exporter.qml");
+		var sendtoAction = alg.ui.addAction(alg.ui.AppMenu.SendTo, "Send to Ps", qsTr("Export to Photoshop"), Qt.resolvedUrl("icons/Photoshop_idle.svg"), Qt.resolvedUrl("icons/Photoshop_hover.svg"));
+		sendtoAction.triggered.connect(sendToTriggered);
   }
 
   onConfigure: {
@@ -28,5 +36,111 @@ PainterPlugin {
 
   ConfigurePanel {
     id: configurePanel
+  }
+
+  QtObject {
+	property bool loading: false
+    id: internal
+
+    function updateProgressWindow(text) {
+        progressText.text = text
+    }
+
+    function launchExportDialog() {
+      exportDialog.open()
+    }
+
+    function launchExport() {
+        try {
+          loading = true;
+          progressWindow.open()
+          Photoshop.importPainterDocument(updateProgressWindow);
+        }
+        catch (e) {
+          alg.log.warn(e.message)
+        }
+        finally {
+          progressWindow.close()
+          loading = false;
+        }
+    }
+  }
+  ExportDialog {
+      id: exportDialog
+
+      onAccepted: {
+        close()
+        internal.launchExport()
+      }
+  }
+
+  AlgWindow {
+    id: progressWindow
+    minimumWidth: 400
+    minimumHeight: 125
+    maximumWidth: 400
+    maximumHeight: 125
+    title: qsTr("Export to Photoshop")
+    flags: Qt.Dialog | Qt.CustomizeWindowHint | Qt.WindowTitleHint | Qt.WindowSystemMenuHint
+    function reload() {
+      progressText.text = qsTr("Export in progress...")
+    }
+
+    Rectangle {
+      id: content
+      color: "transparent"
+      anchors.fill: parent
+      anchors.margins: 12
+
+      ColumnLayout {
+        spacing: 18
+        anchors.fill: parent
+
+        Rectangle {
+            color: "transparent"
+            Layout.fillWidth: true
+            AlgTextEdit {
+              id: progressText
+              anchors.centerIn: parent
+              width: parent.width
+              wrapMode: TextEdit.Wrap
+              clip: true
+              readOnly: true
+            }
+        }
+
+        Rectangle {
+            color: "transparent"
+            Layout.fillWidth: true
+            AlgProgressBar {
+              id: progressBar
+              anchors.centerIn: parent
+              width: parent.width
+              indeterminate: true
+            }
+        }
+      }
+    }
+  }
+
+  FileDialog {
+    id: fileDialog
+    title: qsTr("Please locate Photoshop...")
+    nameFilters: [ "Photoshop files (*.exe *.app)", "All files (*)" ]
+    selectedNameFilter: "Executable files (*)"
+    onAccepted: {
+      alg.settings.setValue("photoshopPath", alg.fileIO.urlToLocalFile(fileUrl.toString()));
+      internal.launchExportDialog()
+    }
+  }  
+
+  function sendToTriggered() {
+    if (!internal.loading) {
+      if (!alg.settings.contains("photoshopPath") && alg.settings.value("launchPhotoshop", false)) {
+        fileDialog.open();
+      } else {
+        internal.launchExportDialog()
+      }
+    }
   }
 }
