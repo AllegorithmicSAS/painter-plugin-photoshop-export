@@ -167,19 +167,19 @@ AlgDialog {
 
                                 Connections {
                                     target: noneButton
-                                    onClicked: {
+                                    function onClicked() {
                                        checked = false
                                     }
                                 }
                                 Connections {
                                     target: allButton
-                                    onClicked: {
+                                    function onClicked() {
                                        checked = true
                                     }
                                 }
                                 Connections {
                                     target: prevItem
-                                    onClicked: {
+                                    function onClicked() {
                                         checked = prevItem.checked
                                         // transmit event to children
                                         rowItem.clicked()
