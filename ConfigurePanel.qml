@@ -8,7 +8,7 @@ import AlgWidgets 2.0
 AlgDialog {
   id: configureDialog
   visible: false
-  title: "configure"
+  title: qsTr("Configure")
   width: 500
   height: 220
   minimumWidth: 400
@@ -150,9 +150,9 @@ AlgDialog {
 
             model: ListModel {
               id: bitDepthModel
-              ListElement { key: "TextureSet value"; value: -1 }
-              ListElement { key: "8 bits"; value: 8 }
-              ListElement { key: "16 bits"; value: 16 }
+              ListElement { key: qsTr("TextureSet value"); value: -1 }
+              ListElement { key: qsTr("8 bits"); value: 8 }
+              ListElement { key: qsTr("16 bits"); value: 16 }
             }
             function reload() {
               var bitdepth = alg.settings.value("bitDepth", -1);
