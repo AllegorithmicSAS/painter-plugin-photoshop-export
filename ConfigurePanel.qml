@@ -1,8 +1,8 @@
-import QtQuick 2.3
-import QtQuick.Window 2.2
-import QtQuick.Dialogs 1.2
-import QtQuick.Controls 2.0
-import QtQuick.Layouts 1.3
+import QtQuick
+import QtQuick.Window
+import QtQuick.Dialogs
+import QtQuick.Controls
+import QtQuick.Layouts
 import AlgWidgets 2.0
 
 AlgDialog {
@@ -49,124 +49,120 @@ AlgDialog {
 
       ColumnLayout {
         spacing: 18
+        Layout.fillWidth: true
         Layout.maximumWidth: scrollView.viewportWidth
         Layout.minimumWidth: scrollView.viewportWidth
 
-        ColumnLayout {
-          spacing: 6
+        AlgLabel {
+          text: qsTr("Path to Photoshop")
           Layout.fillWidth: true
-
-          AlgLabel {
-            text: qsTr("Path to Photoshop")
-            Layout.fillWidth: true
-          }
-
-          RowLayout {
-            spacing: 6
-            Layout.fillWidth: true
-
-            AlgTextEdit {
-              id: path
-              borderActivated: true
-              wrapMode: TextEdit.Wrap
-              readOnly: true
-              Layout.fillWidth: true
-
-              function reload() {
-                text = alg.settings.value("photoshopPath", "...")
-              }
-
-              Component.onCompleted: {
-                reload()
-              }
-            }
-
-            AlgButton {
-              id: searchPathButton
-              text: qsTr("Set path")
-              onClicked: {
-                // open the search path dialog
-                searchPathDialog.setVisible(true)
-              }
-            }
-          }
         }
 
         RowLayout {
           spacing: 6
           Layout.fillWidth: true
 
-          AlgLabel {
-            text: qsTr("Launch photoshop after export")
+          AlgTextEdit {
+            id: path
+            borderActivated: true
+            wrapMode: TextEdit.Wrap
+            readOnly: true
             Layout.fillWidth: true
-          }
-
-          AlgCheckBox {
-            id: launchPhotoshopCheckBox
 
             function reload() {
-              checked = alg.settings.value("launchPhotoshop", false);
+              text = alg.settings.value("photoshopPath", "...")
             }
 
             Component.onCompleted: {
               reload()
             }
           }
-        }
 
-        RowLayout {
-          spacing: 6
-          AlgLabel {
-            text: qsTr("Enable padding")
-            Layout.fillWidth: true
-          }
-
-          AlgCheckBox {
-            id: paddingCheckBox
-
-            function reload() {
-              checked = alg.settings.value("padding", false);
-            }
-
-            Component.onCompleted: {
-              reload()
+          AlgButton {
+            id: searchPathButton
+            text: qsTr("Set path")
+            onClicked: {
+              // open the search path dialog
+              searchPathDialog.visible = true
             }
           }
         }
+      }
 
-        RowLayout {
-          spacing: 6
+      RowLayout {
+        spacing: 6
+        Layout.fillWidth: true
+
+        AlgLabel {
+          text: qsTr("Launch photoshop after export")
           Layout.fillWidth: true
+        }
 
-          AlgLabel {
-            text: qsTr("Export bitdepth")
-            Layout.fillWidth: true
+        AlgCheckBox {
+          id: launchPhotoshopCheckBox
+
+          function reload() {
+            checked = alg.settings.value("launchPhotoshop", false);
           }
 
-          AlgComboBox {
-            id: bitDepthComboBox
-            textRole: "key"
-            Layout.minimumWidth: 150
+          Component.onCompleted: {
+            reload()
+          }
+        }
+      }
 
-            model: ListModel {
-              id: bitDepthModel
-              ListElement { key: qsTr("TextureSet value"); value: -1 }
-              ListElement { key: qsTr("8 bits"); value: 8 }
-              ListElement { key: qsTr("16 bits"); value: 16 }
-            }
-            function reload() {
-              var bitdepth = alg.settings.value("bitDepth", -1);
-              for (var i = 0; i < bitDepthModel.count; ++i) {
-                var current = bitDepthModel.get(i);
-                if (bitdepth === current.value) {
-                  currentIndex = i;
-                  break
-                }
+      RowLayout {
+        spacing: 6
+        AlgLabel {
+          text: qsTr("Enable padding")
+          Layout.fillWidth: true
+        }
+
+        AlgCheckBox {
+          id: paddingCheckBox
+
+          function reload() {
+            checked = alg.settings.value("padding", false);
+          }
+
+          Component.onCompleted: {
+            reload()
+          }
+        }
+      }
+
+      RowLayout {
+        spacing: 6
+        Layout.fillWidth: true
+
+        AlgLabel {
+          text: qsTr("Export bitdepth")
+          Layout.fillWidth: true
+        }
+
+        AlgComboBox {
+          id: bitDepthComboBox
+          textRole: "key"
+          Layout.minimumWidth: 150
+
+          model: ListModel {
+            id: bitDepthModel
+            ListElement { key: qsTr("TextureSet value"); value: -1 }
+            ListElement { key: qsTr("8 bits"); value: 8 }
+            ListElement { key: qsTr("16 bits"); value: 16 }
+          }
+          function reload() {
+            var bitdepth = alg.settings.value("bitDepth", -1);
+            for (var i = 0; i < bitDepthModel.count; ++i) {
+              var current = bitDepthModel.get(i);
+              if (bitdepth === current.value) {
+                currentIndex = i;
+                break
               }
             }
-            Component.onCompleted: {
-              reload()
-            }
+          }
+          Component.onCompleted: {
+            reload()
           }
         }
       }
@@ -177,9 +173,9 @@ AlgDialog {
     id: searchPathDialog
     title: qsTr("Choose a Photoshop executable file...")
     nameFilters: [ "Photoshop files (*.exe *.app)", "All files (*)" ]
-    selectedNameFilter: "Executable files (*)"
+    selectedNameFilter.index: 0
     onAccepted: {
-      path.text = alg.fileIO.urlToLocalFile(fileUrl.toString())
+      path.text = alg.fileIO.urlToLocalFile(searchPathDialog.selectedFile.toString())
     }
     onVisibleChanged: {
       if (!visible) {

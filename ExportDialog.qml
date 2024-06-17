@@ -1,8 +1,8 @@
-import QtQuick 2.3
-import QtQuick.Window 2.2
-import QtQuick.Dialogs 1.2
-import QtQuick.Controls 2.0
-import QtQuick.Layouts 1.3
+import QtQuick
+import QtQuick.Window
+import QtQuick.Dialogs
+import QtQuick.Controls
+import QtQuick.Layouts
 import AlgWidgets 2.0
 
 import "photoshop.js" as Photoshop
