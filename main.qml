@@ -1,9 +1,8 @@
-import QtQuick 2.2
+import QtQuick
 import Painter 1.0
-import QtQuick.Layouts 1.2
-import QtQuick.Dialogs 1.0
-import QtQuick.Controls 1.4
-import QtQuick.Controls.Styles 1.4
+import QtQuick.Layouts
+import QtQuick.Dialogs
+import QtQuick.Controls
 import AlgWidgets 2.0
 import AlgWidgets.Style 2.0
 
@@ -132,11 +131,11 @@ PainterPlugin {
 	FileDialog {
 		id: fileDialog
 		title: qsTr("Please locate Photoshop...")
-		nameFilters: [ "Photoshop files (*.exe *.app)", "All files (*)" ]
-		selectedNameFilter: "Executable files (*)"
+		nameFilters: [ "Executable file (*.exe *.app)", "All files (*)" ]
+		selectedNameFilter.index : 0
 		onAccepted: {
-			alg.settings.setValue("photoshopPath", alg.fileIO.urlToLocalFile(fileUrl.toString()));
+			alg.settings.setValue("photoshopPath", alg.fileIO.urlToLocalFile(fileDialog.selectedFile.toString()));
 			internal.launchExportDialog()
 		}
-	}  
+	}
 }
