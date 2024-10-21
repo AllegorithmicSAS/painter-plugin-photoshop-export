@@ -45,6 +45,10 @@ function PhotoshopExporter(callback) {
   this.exportConfig = new ExportConfig()
   this.exportConfig.usePadding(alg.settings.value("padding", false))
 
+  // Set Dilation
+  // Added by CPAWLIUK to allow users to send to Photoshop with dilation
+  this.exportConfig.dilation = alg.settings.value("dilation", 0);
+
   //Get the project name
   var projectName = alg.project.name()
 
