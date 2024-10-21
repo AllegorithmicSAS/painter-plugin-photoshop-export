@@ -116,7 +116,7 @@ AlgDialog {
       RowLayout {
         spacing: 6
         AlgLabel {
-          text: qsTr("Enable padding")
+          text: qsTr("Infinite Padding/Dilation")
           Layout.fillWidth: true
         }
 
