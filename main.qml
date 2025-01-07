@@ -19,7 +19,7 @@ PainterPlugin {
 		 	}
 		 	alg.settings.setValue("padding", false);
 		}
-		var sendtoAction = alg_.mainWindowExt.addSendTo(qsTr("Export to Photoshop"), qsTr("Export to Photoshop"), Qt.resolvedUrl("icons/Photoshop_idle.svg"), Qt.resolvedUrl("icons/Photoshop_idle.svg"));
+		var sendtoAction = alg_.mainWindowExt.addSendTo(qsTr("Export to Photoshop"), qsTr("Export to Photoshop"), Qt.resolvedUrl("icons/Photoshop_idle_padded.svg"), Qt.resolvedUrl("icons/Photoshop_idle_padded.svg"));
 		sendtoAction.triggered.connect(internal.sendToTriggered);
 	}
 
