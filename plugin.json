@@ -1,7 +1,7 @@
 {
   "description": "This plugin exports a Substance 3D Painter project to Photoshop. Creates one Photoshop document for each channel of each stack, preserving the stack hierarchy (layers and groups).",
   "url": "https://github.com/AllegorithmicSAS/painter-plugin-photoshop-export",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "license": "<a href=\"https://opensource.org/licenses/MIT\">MIT</a>",
-  "min_api_version": "1.1.18"
+  "min_api_version": "1.1.19"
 }
