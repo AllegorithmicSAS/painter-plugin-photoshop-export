@@ -184,8 +184,18 @@ PhotoshopExporter.prototype = {
           //Update the progress bar
           this.photoshopScript += "progressBar.layer.value = 0; \n";
           //Gamma correction for sRGB channel
-          if(this.channel == "basecolor" || this.channel == "diffuse" || this.channel == "specular" || this.channel == "emissive" || this.channel == "transmissive" ) {
-            this.photoshopScript += " convert_to_profile(); \n";
+          if(this.channel == "basecolor"
+          || this.channel == "diffuse"
+          || this.channel == "specular"
+          || this.channel == "emissive"
+          || this.channel == "transmissive"
+          || this.channel == "absorptioncolor"
+          || this.channel == "sheencolor"
+          || this.channel == "coatcolor"
+          || this.channel == "coatroughness"
+          || this.channel == "scatteringcolor"
+          || this.channel == "specularedgecolor") {
+            this.photoshopScript += "app.activeDocument.convertProfile( \"Working RGB\", Intent.PERCEPTUAL, false, false ); \n"
           }
           // Add default background in normal channel
           if(this.channel === "normal") {
