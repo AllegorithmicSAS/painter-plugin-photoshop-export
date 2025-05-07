@@ -192,7 +192,6 @@ PhotoshopExporter.prototype = {
           || this.channel == "absorptioncolor"
           || this.channel == "sheencolor"
           || this.channel == "coatcolor"
-          || this.channel == "coatroughness"
           || this.channel == "scatteringcolor"
           || this.channel == "specularedgecolor") {
             this.photoshopScript += "app.activeDocument.convertProfile( \"Working RGB\", Intent.PERCEPTUAL, false, false ); \n"
