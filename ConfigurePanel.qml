@@ -10,9 +10,9 @@ AlgDialog {
   visible: false
   title: qsTr("Configure")
   width: 500
-  height: 220
+  height: 240
   minimumWidth: 400
-  minimumHeight: 220
+  minimumHeight: 240
 
   function reload() {
     content.reload()
@@ -26,6 +26,7 @@ AlgDialog {
 		alg.settings.setValue("padding", paddingCheckBox.checked);
         var index = bitDepthComboBox.currentIndex
         alg.settings.setValue("bitDepth", bitDepthModel.get(index).value);
+    alg.settings.setValue("dilation", dilationSlider.value);
   }
 
   Rectangle {
@@ -41,6 +42,7 @@ AlgDialog {
       launchPhotoshopCheckBox.reload()
       paddingCheckBox.reload()
       bitDepthComboBox.reload()
+      dilationSlider.reload()
     }
 
     AlgScrollView {
@@ -114,7 +116,7 @@ AlgDialog {
       RowLayout {
         spacing: 6
         AlgLabel {
-          text: qsTr("Enable padding")
+          text: qsTr("Infinite Padding/Dilation")
           Layout.fillWidth: true
         }
 
@@ -129,6 +131,36 @@ AlgDialog {
             reload()
           }
         }
+      }
+
+      RowLayout {
+          spacing: 6
+
+          AlgLabel {
+          text: qsTr("Dilation")
+          Layout.fillWidth: true
+        }
+
+        AlgSlider {
+          id: dilationSlider
+
+          minValue: 0
+          maxValue: 256
+          stepSize: 2
+          Layout.fillWidth: true
+
+          enabled: !paddingCheckBox.checked
+
+          function reload() {
+            value = alg.settings.value("dilation", 0);
+          }
+
+          Component.onCompleted: {
+            reload()
+          }
+        }
+
+        
       }
 
       RowLayout {
